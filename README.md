@@ -3,6 +3,14 @@
 바이브 코딩을 처음 접하는 사람이 **순서대로 따라가며** 배우는 학습 사이트.
 클로드(Claude) 사용을 전제로 하고, 2026년의 **하네스 엔지니어링**을 하나의 트랙으로 다룹니다.
 
+[![Verify and deploy](https://github.com/seonhuiChoi/vibe-coding-harness-guide/actions/workflows/deploy.yml/badge.svg)](https://github.com/seonhuiChoi/vibe-coding-harness-guide/actions/workflows/deploy.yml)
+
+**→ https://seonhuichoi.github.io/vibe-coding-harness-guide/**
+
+`main` 에 push하면 `harness/verify.sh` 14개 검사를 통과한 경우에만 자동 배포됩니다.
+검사가 하나라도 실패하면 배포 잡 자체가 실행되지 않습니다.
+로컬에서는 `index.html` 을 더블클릭하면 바로 열립니다.
+
 ## 커리큘럼 — 4트랙 15단계 + 부록 3
 
 | 트랙 | 단계 | 내용 |
