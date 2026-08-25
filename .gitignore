@@ -1,0 +1,44 @@
+# ── 비밀 값 — 절대 커밋 금지 ──────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+credentials.json
+service-account*.json
+.netrc
+.npmrc
+*.local
+
+# ── 클로드 코드 개인 설정 ────────────────────────────────
+# .claude/settings.json 은 하네스의 일부라 커밋합니다.
+# 아래는 개인 로컬 오버라이드라 제외합니다.
+.claude/settings.local.json
+.claude/*.local.json
+
+# ── 생성물 ──────────────────────────────────────────────
+# index.html 이 단일 소스입니다. bash harness/build.sh 로 재생성됩니다.
+dist/
+
+# ── 의존성 · 로그 ───────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-error.log*
+*.log
+
+# ── OS ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# ── 에디터 ─────────────────────────────────────────────
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+*~

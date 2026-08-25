@@ -1,0 +1,1771 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--A1-->
+<title>바이브 코딩 하네스 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800;900&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* ═══ tokens ═══ */
+:root{
+  --paper:#eceff4; --surface:#ffffff; --surface-2:#e3e8ef;
+  --ink:#0f1621; --ink-2:#2e3949; --muted:#4e5867; --faint:#646e7d;
+  --rule:#d3dae4; --rule-soft:#e2e7ee;
+  --accent:#0f5f66; --accent-deep:#0a464c; --accent-wash:#e0eff0;
+  --accent-bar:#0f5f66; --on-accent:#ffffff;
+  --warn:#8a5600; --warn-wash:#fbf1dc; --warn-rule:#e6d0a4;
+  --danger:#a3302a; --danger-wash:#fbeae8; --danger-rule:#eec3bd;
+  --ok:#1c6547; --ok-wash:#e3f1ea; --ok-rule:#b7d7c6;
+  --term-bg:#0b0e13; --term-ink:#c8d2e0; --term-dim:#68748a; --term-bar:#05070a;
+  --scrim:rgba(10,14,20,.5);
+  --focus:#1e6fd9;
+  --shadow:0 1px 2px rgba(15,22,33,.06), 0 10px 26px -16px rgba(15,22,33,.30);
+  --f-display:"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0b0f15; --surface:#141a23; --surface-2:#1b232e;
+    --ink:#e4e8ee; --ink-2:#bcc5d1; --muted:#94a0b0; --faint:#78838f;
+    --rule:#242d3a; --rule-soft:#1a212b;
+    --accent:#4fb3ba; --accent-deep:#7fd0d5; --accent-wash:#0e2a2d;
+    --accent-bar:#12494e; --on-accent:#dff4f5;
+    --warn:#d9a24a; --warn-wash:#241d10; --warn-rule:#46381c;
+    --danger:#e88478; --danger-wash:#2a1512; --danger-rule:#4d241f;
+    --ok:#5fc194; --ok-wash:#0f231a; --ok-rule:#23412f;
+    --term-bg:#0b0e13; --term-ink:#c8d2e0; --term-dim:#68748a; --term-bar:#05070a;
+    --scrim:rgba(3,5,8,.62);
+    --focus:#6fa8f5;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 30px -18px rgba(0,0,0,.85);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0b0f15; --surface:#141a23; --surface-2:#1b232e;
+  --ink:#e4e8ee; --ink-2:#bcc5d1; --muted:#94a0b0; --faint:#78838f;
+  --rule:#242d3a; --rule-soft:#1a212b;
+  --accent:#4fb3ba; --accent-deep:#7fd0d5; --accent-wash:#0e2a2d;
+  --accent-bar:#12494e; --on-accent:#dff4f5;
+  --warn:#d9a24a; --warn-wash:#241d10; --warn-rule:#46381c;
+  --danger:#e88478; --danger-wash:#2a1512; --danger-rule:#4d241f;
+  --ok:#5fc194; --ok-wash:#0f231a; --ok-rule:#23412f;
+  --term-bg:#0b0e13; --term-ink:#c8d2e0; --term-dim:#68748a; --term-bar:#05070a;
+  --scrim:rgba(3,5,8,.62);
+  --focus:#6fa8f5;
+  --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 30px -18px rgba(0,0,0,.85);
+}
+
+/* ═══ base ═══ */
+*{box-sizing:border-box}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.78; -webkit-font-smoothing:antialiased}
+a{color:var(--accent-deep); text-underline-offset:3px; text-decoration-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--focus); outline-offset:2px; border-radius:2px}
+button{font:inherit; color:inherit}
+.scrim{display:none}
+.topbar{display:none}
+
+/* ═══ shell ═══ */
+.shell{display:grid; grid-template-columns:300px minmax(0,1fr); min-height:100vh}
+
+/* ═══ rail ═══ */
+.rail{position:sticky; top:0; height:100vh; overflow-y:auto; background:var(--surface); border-right:1px solid var(--rule); padding:24px 18px 18px; display:flex; flex-direction:column; gap:20px}
+.brand{display:flex; gap:11px; align-items:center; text-decoration:none; color:inherit}
+.brand-mark{flex:none; width:36px; height:36px; display:grid; place-items:center; background:var(--accent-bar); color:var(--on-accent); font-family:var(--f-mono); font-size:15px; font-weight:700; letter-spacing:-.03em}
+.brand-txt b{display:block; font-family:var(--f-display); font-weight:800; font-size:15.5px; line-height:1.3; letter-spacing:-.02em}
+.brand-txt em{display:block; font-family:var(--f-mono); font-style:normal; font-size:10px; letter-spacing:.14em; color:var(--faint)}
+.gauge{margin-top:16px; border:1px solid var(--rule); background:var(--surface-2); padding:10px 12px}
+.gauge-top{display:flex; justify-content:space-between; align-items:baseline; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.1em; color:var(--muted); text-transform:uppercase}
+.gauge-top b{font-size:14px; color:var(--ink); font-variant-numeric:tabular-nums}
+.gauge-bar{height:4px; margin-top:8px; background:var(--rule); overflow:hidden}
+.gauge-bar i{display:block; height:100%; width:0; background:var(--accent); transition:width .35s ease}
+.rail-nav{flex:1}
+.trk{margin-bottom:18px}
+.trk-hd{display:flex; align-items:baseline; gap:8px; padding:0 2px 7px; border-bottom:1px solid var(--rule-soft); margin-bottom:6px}
+.trk-hd b{font-family:var(--f-mono); font-size:10px; letter-spacing:.16em; color:var(--accent); text-transform:uppercase}
+.trk-hd span{flex:1; font-size:11.5px; color:var(--faint); line-height:1.4}
+.trk-hd em{font-family:var(--f-mono); font-style:normal; font-size:10.5px; color:var(--faint); font-variant-numeric:tabular-nums}
+.trk ol,.trk ul{list-style:none; margin:0; padding:0}
+.nav-item{display:flex; gap:10px; align-items:center; width:100%; text-align:left; background:none; border:0; cursor:pointer; padding:5px 8px 5px 4px; color:var(--muted); font-size:13.5px; line-height:1.45}
+.nav-item:hover{color:var(--ink); background:var(--surface-2)}
+.nav-num{flex:none; width:26px; height:22px; display:grid; place-items:center; border:1px solid var(--rule); background:var(--surface); font-family:var(--f-mono); font-size:10.5px; color:var(--faint); font-variant-numeric:tabular-nums}
+.nav-item[aria-current="true"]{color:var(--ink); font-weight:700; background:var(--accent-wash)}
+.nav-item[aria-current="true"] .nav-num{border-color:var(--accent); color:var(--accent)}
+.nav-item[data-done="1"] .nav-num{background:var(--accent-bar); border-color:var(--accent-bar); color:var(--on-accent)}
+.nav-item[data-done="1"] .nav-num span{display:none}
+.nav-item[data-done="1"] .nav-num::after{content:"✓"; font-size:11px}
+.rail-foot{border-top:1px solid var(--rule-soft); padding-top:13px}
+.ghost-btn{background:none; border:1px solid var(--rule); cursor:pointer; padding:5px 10px; font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; color:var(--muted); text-transform:uppercase}
+.ghost-btn:hover{border-color:var(--accent); color:var(--accent)}
+
+/* ═══ instrument bar ═══ */
+.main{min-width:0; padding:0 0 110px}
+.instr{position:sticky; top:0; z-index:20; background:color-mix(in srgb,var(--paper) 88%,transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--rule)}
+.instr-in{max-width:820px; margin:0 auto; padding:9px 40px; display:flex; align-items:center; gap:14px; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.instr-in .tk{color:var(--accent); font-weight:500}
+.instr-in .sp{flex:1}
+.instr-meter{width:120px; height:3px; background:var(--rule)}
+.instr-meter i{display:block; height:100%; width:0; background:var(--accent); transition:width .35s ease}
+.instr-in .pc{font-variant-numeric:tabular-nums; color:var(--ink); min-width:34px; text-align:right}
+.wrap{max-width:820px; margin:0 auto; padding:0 40px}
+
+/* ═══ typography ═══ */
+.step{display:none; padding-top:46px; animation:rise .28s ease}
+.step.on{display:block}
+@keyframes rise{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+.eyebrow{display:flex; align-items:center; gap:10px; margin:0 0 13px; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent)}
+.eyebrow::after{content:""; flex:1; height:1px; background:var(--rule)}
+h1{font-family:var(--f-display); font-weight:900; font-size:clamp(29px,4.4vw,40px); line-height:1.24; letter-spacing:-.035em; margin:0 0 16px; text-wrap:balance}
+h2{font-family:var(--f-display); font-weight:800; font-size:21px; line-height:1.4; letter-spacing:-.025em; margin:50px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--rule); text-wrap:balance}
+h3{font-weight:700; font-size:16px; margin:30px 0 9px}
+.lead{font-size:17.5px; line-height:1.75; color:var(--ink-2); margin:0 0 20px}
+p{margin:0 0 15px}
+strong{font-weight:700; color:var(--ink)}
+.meta{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 32px; padding-bottom:24px; border-bottom:1px solid var(--rule)}
+.chip{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.04em; color:var(--muted); border:1px solid var(--rule); padding:3px 9px; background:var(--surface)}
+ul,ol{margin:0 0 17px; padding-left:21px}
+li{margin-bottom:6px}
+li::marker{color:var(--faint)}
+ul.tight li{margin-bottom:2px}
+code{font-family:var(--f-mono); font-size:.85em; background:var(--surface-2); padding:1px 5px; color:var(--ink)}
+kbd{font-family:var(--f-mono); font-size:.78em; background:var(--surface); color:var(--ink); border:1px solid var(--rule); border-bottom-width:2px; padding:1px 6px; white-space:nowrap}
+
+/* ═══ code cards ═══ */
+.card{margin:0 0 20px; box-shadow:var(--shadow)}
+.card-bar{display:flex; align-items:center; gap:9px; padding:7px 12px; font-family:var(--f-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase}
+.card-bar .lbl{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.copy{border:1px solid currentColor; background:none; cursor:pointer; padding:2px 8px; font-family:var(--f-mono); font-size:9.5px; letter-spacing:.08em; opacity:.7; text-transform:uppercase}
+.copy:hover{opacity:1}
+.card pre{margin:0; padding:13px 15px; overflow-x:auto; font-family:var(--f-mono); font-size:13px; line-height:1.7; tab-size:2}
+.term .card-bar{background:var(--term-bar); color:var(--term-dim)}
+.term .card-bar .dots{display:flex; gap:5px}
+.term .card-bar .dots i{width:7px; height:7px; border-radius:50%; background:var(--term-dim); opacity:.45; display:block}
+.term pre{background:var(--term-bg); color:var(--term-ink)}
+.term pre .c{color:var(--term-dim)}
+.prompt{border:1px solid var(--accent); background:var(--accent-wash); box-shadow:none}
+.prompt .card-bar{background:var(--accent-bar); color:var(--on-accent)}
+.prompt .card-bar .lbl{font-weight:500}
+.prompt .copy{color:var(--on-accent); border-color:color-mix(in srgb,var(--on-accent) 50%,transparent)}
+.prompt pre{background:transparent; color:var(--ink); white-space:pre-wrap; word-break:break-word; font-family:var(--f-body); font-size:14.5px; line-height:1.8}
+.file{border:1px solid var(--rule); background:var(--surface); box-shadow:none}
+.file .card-bar{background:var(--surface-2); color:var(--muted); border-bottom:1px solid var(--rule)}
+.file .card-bar .lbl{font-family:var(--f-mono); text-transform:none; letter-spacing:0; font-size:11.5px}
+.file pre{background:var(--surface); color:var(--ink-2)}
+
+/* ═══ callouts ═══ */
+.note{margin:0 0 20px; padding:13px 17px; border:1px solid var(--rule); background:var(--surface); font-size:15px; line-height:1.72}
+.note p:last-child{margin-bottom:0}
+.note .tag{display:block; margin-bottom:4px; font-family:var(--f-mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase; font-weight:700}
+.note.tip{background:var(--ok-wash); border-color:var(--ok-rule)} .note.tip .tag{color:var(--ok)}
+.note.warn{background:var(--warn-wash); border-color:var(--warn-rule)} .note.warn .tag{color:var(--warn)}
+.note.stop{background:var(--danger-wash); border-color:var(--danger-rule)} .note.stop .tag{color:var(--danger)}
+
+/* ═══ tables ═══ */
+.tbl-wrap{overflow-x:auto; margin:0 0 20px; border:1px solid var(--rule); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:430px}
+th,td{text-align:left; padding:10px 13px; border-bottom:1px solid var(--rule-soft); vertical-align:top}
+thead th{font-family:var(--f-mono); font-size:10px; letter-spacing:.11em; text-transform:uppercase; color:var(--muted); font-weight:500; background:var(--surface-2); border-bottom:1px solid var(--rule)}
+tbody tr:last-child td{border-bottom:0}
+td code{white-space:nowrap}
+.k-col{width:32%; font-family:var(--f-mono); font-size:12.5px}
+.ba{margin:0 0 20px; border:1px solid var(--rule); background:var(--surface)}
+.ba > div{padding:12px 15px; display:grid; grid-template-columns:auto 1fr; gap:11px; align-items:start; font-size:14.5px; line-height:1.65}
+.ba > div + div{border-top:1px solid var(--rule)}
+.ba .mk{font-family:var(--f-mono); font-weight:700; font-size:13px; line-height:1.72}
+.ba .bad{color:var(--muted)} .ba .bad .mk{color:var(--faint)}
+.ba .good{background:var(--ok-wash)} .ba .good .mk{color:var(--ok)}
+
+/* ═══ diagram ═══ */
+figure{margin:0 0 22px}
+figure svg{display:block; width:100%; max-width:100%; height:auto; color:var(--ink-2)}
+figcaption{margin-top:9px; font-size:13px; line-height:1.6; color:var(--muted); border-left:2px solid var(--rule); padding-left:11px}
+.dg-fill{fill:var(--surface)} .dg-fill2{fill:var(--surface-2)}
+.dg-st{stroke:currentColor; fill:none; stroke-width:1.2}
+.dg-arrow{stroke:currentColor; stroke-width:1.2; fill:none}
+.dg-head{fill:currentColor}
+.dg-t{fill:var(--ink); font-family:var(--f-body); font-size:12.5px; font-weight:700}
+.dg-s{fill:var(--muted); font-family:var(--f-mono); font-size:9.5px; letter-spacing:.08em}
+.dg-loop{stroke:var(--accent); stroke-width:1.6; fill:none}
+.dg-loop-h{fill:var(--accent)}
+.dg-loop-t{fill:var(--accent); font-family:var(--f-mono); font-size:10px; letter-spacing:.04em}
+.dg-guard{stroke:var(--danger); stroke-width:1.3; fill:none; stroke-dasharray:4 3}
+.dg-guard-t{fill:var(--danger); font-family:var(--f-mono); font-size:10px; letter-spacing:.06em}
+
+/* ═══ map / layers ═══ */
+.map{list-style:none; margin:0 0 24px; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule)}
+.map li{margin:0}
+.map button{display:block; width:100%; height:100%; text-align:left; cursor:pointer; background:var(--surface); border:0; padding:13px 14px}
+.map button:hover{background:var(--accent-wash)}
+.map b{display:block; font-family:var(--f-mono); font-size:10px; letter-spacing:.1em; color:var(--accent); margin-bottom:3px; font-weight:500}
+.map em{display:block; font-style:normal; font-weight:700; font-size:14px; line-height:1.4; margin-bottom:2px}
+.map span{display:block; font-size:12px; line-height:1.5; color:var(--muted)}
+
+/* ═══ checklist / pager ═══ */
+.done-box{margin:48px 0 0; border:1px solid var(--rule); background:var(--surface); padding:18px 20px}
+.done-box .tag{display:block; margin-bottom:10px; font-family:var(--f-mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--faint)}
+.done-box label{display:flex; gap:11px; align-items:flex-start; cursor:pointer; padding:5px 0; font-size:15px; line-height:1.6}
+.done-box input{flex:none; width:16px; height:16px; margin:5px 0 0; accent-color:var(--accent); cursor:pointer}
+.done-box input:checked + span{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--faint)}
+.pager{display:flex; gap:11px; margin-top:26px}
+.pager a{flex:1; text-decoration:none; border:1px solid var(--rule); padding:12px 15px; background:var(--surface); color:var(--ink)}
+.pager a:hover{border-color:var(--accent)}
+.pager a b{display:block; font-family:var(--f-mono); font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--faint); margin-bottom:2px}
+.pager a em{font-style:normal; font-weight:700; font-size:14px; line-height:1.4}
+.pager a.next{text-align:right}
+.pager a.ph{visibility:hidden}
+
+/* ═══ resources ═══ */
+.res{list-style:none; margin:0 0 24px; padding:0; border-top:1px solid var(--rule)}
+.res li{margin:0; padding:14px 0; border-bottom:1px solid var(--rule-soft)}
+.res .rt{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-bottom:3px}
+.res .rt a{font-weight:700; font-size:15.5px; text-decoration:none; border-bottom:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.badge{font-family:var(--f-mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--rule); padding:1px 7px; color:var(--muted); background:var(--surface-2)}
+.badge.off{border-color:var(--accent); color:var(--accent); background:var(--accent-wash)}
+.badge.kr{border-color:var(--ok-rule); color:var(--ok); background:var(--ok-wash)}
+.res p{margin:0; font-size:14px; line-height:1.68; color:var(--muted)}
+.res .sub{list-style:none; margin:9px 0 0; padding:0 0 0 13px; border-left:2px solid var(--rule)}
+.res .sub li{padding:6px 0; border:0}
+.res .sub .rt a{font-size:14.5px}
+.foot{margin-top:54px; padding-top:20px; border-top:1px solid var(--rule); font-size:13px; line-height:1.72; color:var(--muted)}
+.foot code{background:none; padding:0}
+
+/* ═══ responsive ═══ */
+@media (max-width:980px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .topbar{display:flex; position:sticky; top:0; z-index:30; align-items:center; gap:11px; padding:10px 17px; background:var(--surface); border-bottom:1px solid var(--rule)}
+  .topbar .brand-txt em{display:none}
+  .menu-btn{margin-left:auto; background:none; border:1px solid var(--rule); cursor:pointer; padding:6px 12px; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.08em; color:var(--muted)}
+  .rail{position:fixed; inset:0 auto 0 0; width:min(320px,87vw); z-index:40; transform:translateX(-102%); transition:transform .24s ease; box-shadow:var(--shadow)}
+  .rail.open{transform:none}
+  .scrim{position:fixed; inset:0; background:var(--scrim); z-index:35; display:none}
+  .scrim.on{display:block}
+  .instr{top:45px}
+  .instr-in,.wrap{padding-left:20px; padding-right:20px}
+  .step{padding-top:30px}
+}
+@media (prefers-reduced-motion:reduce){
+  .step{animation:none} .rail{transition:none} .gauge-bar i,.instr-meter i{transition:none}
+}
+</style>
+<!--/A1-->
+</head>
+<body>
+<!--A2-->
+<header class="topbar">
+  <span class="brand-mark">H</span>
+  <span class="brand-txt"><b>바이브 코딩 하네스 가이드</b></span>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="rail">목차</button>
+</header>
+<div class="scrim" id="scrim"></div>
+
+<div class="shell">
+  <aside class="rail" id="rail" aria-label="학습 단계">
+    <div>
+      <a class="brand" href="#step-00">
+        <span class="brand-mark">H</span>
+        <span class="brand-txt"><b>바이브 코딩<br>하네스 가이드</b><em>WITH CLAUDE</em></span>
+      </a>
+      <div class="gauge">
+        <div class="gauge-top"><span>전체 진도</span><b><span id="progNum">0</span>/15</b></div>
+        <div class="gauge-bar"><i id="progFill"></i></div>
+      </div>
+    </div>
+    <nav class="rail-nav" id="railNav"></nav>
+    <div class="rail-foot"><button class="ghost-btn" id="resetBtn">진도 초기화</button></div>
+  </aside>
+
+  <main class="main">
+    <div class="instr">
+      <div class="instr-in">
+        <span class="tk" id="instrTrack">트랙 1 · 기초</span>
+        <span id="instrStep">STEP 00</span>
+        <span class="sp"></span>
+        <span class="instr-meter"><i id="instrFill"></i></span>
+        <span class="pc" id="instrPct">0%</span>
+      </div>
+    </div>
+    <div class="wrap">
+
+<section class="step" id="step-00" data-title="바이브 코딩이란" data-track="0">
+<p class="eyebrow">Step 00 · 시작하기 전에</p>
+<h1>코딩을 배우는 게 아니라,<br>맡기는 법을 배웁니다</h1>
+<p class="lead">코딩 한 줄 몰라도 됩니다. 다만 <strong>맡긴 일이 제대로 됐는지 확인하는 법</strong>은 배워야 합니다. 이 과정은 그 두 가지를 순서대로 다룹니다.</p>
+<div class="meta"><span class="chip">15단계 + 부록 3</span><span class="chip">전체 약 5시간</span><span class="chip">사전지식 없음</span><span class="chip">2026년 8월 기준</span></div>
+
+<h2>바이브 코딩이 뭔가요</h2>
+<p>코드를 직접 타이핑하는 대신, <strong>만들고 싶은 것을 우리말로 설명하면 AI가 코드를 써주는 방식</strong>입니다. 문법을 외우는 능력 대신 원하는 걸 정확히 설명하는 능력이 실력이 됩니다.</p>
+<p>2025년 2월 2일 안드레이 카파시(Andrej Karpathy)가 X에 올린 짧은 글에서 이름이 붙었습니다. 코드가 있다는 사실조차 잊고 흐름에 몸을 맡기는 새로운 코딩이라는 취지였죠. 그해 콜린스 사전은 &ldquo;vibe coding&rdquo;을 <strong>올해의 단어</strong>로 선정했습니다.</p>
+
+<h2>그런데 그대로 하면 망합니다</h2>
+<p>&ldquo;다 맡기고 코드는 보지도 않는다&rdquo;는 원래 뜻 그대로 실무에 적용했을 때 어떤 일이 벌어지는지, 2025~2026년에 충분히 많은 사례가 쌓였습니다. 인증 처리가 빠진 API, 코드에 박힌 비밀 키, 돌아가긴 하는데 아무도 못 고치는 코드.</p>
+<p>그래서 2026년의 흐름은 <strong>&ldquo;맡기되, 틀렸을 때 자동으로 걸리게 만든다&rdquo;</strong> 쪽으로 갔습니다. 이걸 <strong>하네스 엔지니어링</strong>이라고 부릅니다.</p>
+
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">시기</th><th>무엇을 다듬었나</th></tr></thead>
+<tbody>
+<tr><td class="k-col">2023–24<br><strong>프롬프트 엔지니어링</strong></td><td>어떻게 <em>말하느냐</em>. 지시문을 잘 쓰면 결과가 좋아진다.</td></tr>
+<tr><td class="k-col">2025<br><strong>컨텍스트 엔지니어링</strong></td><td>무엇을 <em>보여주느냐</em>. 관련 자료를 잘 넣어주면 결과가 좋아진다.</td></tr>
+<tr><td class="k-col">2026<br><strong>하네스 엔지니어링</strong></td><td>어떤 <em>환경에서 돌리느냐</em>. 도구·검증·안전장치를 갖춰두면 <strong>같은 실수를 두 번 하지 않는다.</strong></td></tr>
+</tbody>
+</table></div>
+
+<div class="note stop">
+<span class="tag">이 과정의 전제</span>
+<p>&ldquo;돌아간다&rdquo;와 &ldquo;안전하다&rdquo;는 다릅니다. 만드는 법(트랙 1–2)이 절반이고, <strong>틀린 걸 걸러내는 장치를 짜는 법(트랙 3)이 나머지 절반</strong>입니다. 트랙 3을 건너뛰면 트랙 4에서 사고가 납니다.</p>
+</div>
+
+<h2>전체 학습 지도</h2>
+<p>왼쪽 레일이 4개 트랙으로 나뉘어 있습니다. 각 단계 맨 아래 체크리스트를 체크하면 진도가 브라우저에 저장됩니다.</p>
+<ul class="map" id="mapGrid"></ul>
+
+<h2>이렇게 쓰세요</h2>
+<ol>
+<li><strong>한 번에 한 단계.</strong> 읽고, 직접 해보고, 체크하고, 다음으로.</li>
+<li><strong>청록색 카드</strong>는 복사해서 클로드에 붙여넣는 프롬프트입니다.</li>
+<li><strong>검은 카드</strong>는 터미널에 입력하는 명령어입니다.</li>
+<li>막히면 부록 <strong>치트시트</strong>, 만들고 싶은 게 생기면 부록 <strong>내 하네스 설계도</strong>.</li>
+</ol>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="00-a"><span>바이브 코딩을 한 문장으로 설명할 수 있다</span></label>
+<label><input type="checkbox" data-ck="00-b"><span>하네스 엔지니어링이 왜 나왔는지 안다</span></label>
+<label><input type="checkbox" data-ck="00-c"><span>&ldquo;돌아간다 ≠ 안전하다&rdquo;의 뜻을 안다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-01" data-title="준비물 갖추기" data-track="0">
+<p class="eyebrow">Step 01 · 준비</p>
+<h1>준비물 갖추기</h1>
+<p class="lead">계정 하나, 폴더 하나. 다만 이름이 비슷한 도구가 여럿이라 그것부터 정리하고 갑니다.</p>
+<div class="meta"><span class="chip">약 15분</span><span class="chip">설치 없음</span></div>
+
+<h2>1. 클로드 계정</h2>
+<p><a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a>에서 가입하세요. <strong>무료 플랜으로 02단계까지 끝까지 갈 수 있습니다.</strong></p>
+<p>03단계부터 쓰는 <strong>클로드 코드</strong>는 유료 구독(Pro / Max / Team / Enterprise)이나 Claude Console 계정(선불 크레딧)이 필요합니다. 지금 결제하지 말고 02단계를 먼저 해보고 결정하세요.</p>
+
+<h2>2. 도구 세 가지</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>도구</th><th>어디서</th><th>무엇을</th></tr></thead>
+<tbody>
+<tr><td><strong>Claude 앱</strong><br><code>claude.ai</code></td><td>브라우저 · 모바일</td><td>대화하며 기획하고 <strong>아티팩트</strong>(미리보기 되는 작은 앱)를 만듭니다. <strong>02단계에서 사용.</strong></td></tr>
+<tr><td><strong>Claude Code</strong><br>터미널</td><td>내 컴퓨터</td><td>내 폴더의 파일을 직접 읽고 고치고 명령을 실행합니다. <strong>03단계부터 주력.</strong></td></tr>
+<tr><td><strong>Claude Code</strong><br>웹 · 앱 · 에디터</td><td>브라우저 · 데스크톱 앱 · VS Code · JetBrains</td><td>터미널판과 같은 일을 화면만 다르게. 터미널이 부담스러우면 여기서 시작해도 됩니다.</td></tr>
+</tbody>
+</table></div>
+<p>이 밖에 Slack, GitHub Actions, GitLab CI에서도 돌아갑니다. 지금은 몰라도 됩니다.</p>
+
+<h2>3. 연습용 폴더</h2>
+<p>바탕화면에 <code>vibe-practice</code> 폴더를 하나 만드세요. 폴더와 파일 이름은 <strong>영어 소문자와 하이픈</strong>으로 짓는 습관을 들이면 나중에 문제가 적습니다.</p>
+
+<h2>4. (윈도우) Git for Windows</h2>
+<p>필수는 아니지만 권장합니다. 설치해두면 클로드 코드가 Bash를 쓸 수 있어 훨씬 매끄럽습니다. 없으면 PowerShell을 대신 씁니다. → <a href="https://git-scm.com/downloads/win" target="_blank" rel="noopener">git-scm.com/downloads/win</a></p>
+
+<div class="note tip"><span class="tag">Tip</span>
+<p>요금제 고민은 미루세요. 다음 단계는 무료 계정으로 처음부터 끝까지 가능합니다. 먼저 되는 걸 보고 정하는 게 순서입니다.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="01-a"><span>claude.ai 계정을 만들고 로그인했다</span></label>
+<label><input type="checkbox" data-ck="01-b"><span>Claude 앱과 Claude Code의 차이를 설명할 수 있다</span></label>
+<label><input type="checkbox" data-ck="01-c"><span><code>vibe-practice</code> 폴더를 만들었다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-02" data-title="5분 만에 첫 결과물" data-track="0">
+<p class="eyebrow">Step 02 · 첫 성공</p>
+<h1>5분 만에 첫 결과물</h1>
+<p class="lead">설치도, 터미널도 없이. 이 단계의 목적은 결과물이 아니라 <strong>감각</strong>입니다.</p>
+<div class="meta"><span class="chip">약 10분</span><span class="chip">무료 계정 가능</span></div>
+
+<h2>① 새 대화를 열고 붙여넣기</h2>
+<p>괄호 안만 본인 것으로 바꾸세요.</p>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 클로드에 붙여넣기</span><button class="copy">복사</button></div>
+<pre>내 소개 페이지를 하나 만들어줘.
+- 이름: (본인 이름)
+- 한 줄 소개: (예 - 바이브 코딩을 배우는 중인 마케터)
+- 좋아하는 것 3가지를 카드로 보여줘
+- 색은 짙은 남색 + 크림색, 글씨는 크게
+- 휴대폰 화면에서도 안 깨지게
+
+완성되면 바로 볼 수 있게 미리보기로 보여줘.</pre></div>
+<p>잠시 뒤 오른쪽에 <strong>아티팩트</strong> 창이 열리고 진짜로 동작하는 웹페이지가 뜹니다.</p>
+
+<h2>② 여기서부터가 진짜 — 고치기</h2>
+<p>한 번에 완성하려 하지 않습니다. <strong>대충 만들고 → 보고 → 고친다.</strong> 이 반복이 바이브 코딩의 전부입니다.</p>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 이어서 던지기</span><button class="copy">복사</button></div>
+<pre>카드를 3개에서 5개로 늘리고, 마우스를 올리면 살짝 떠오르게 해줘.
+그리고 맨 아래에 이메일 보내기 버튼을 하나 넣어줘.</pre></div>
+<p>마음에 안 들면 그냥 말하세요. <code>색이 너무 어두워, 밝게</code> · <code>방금 바꾼 거 되돌려줘</code> · <code>글씨 한 단계만 줄여줘</code></p>
+
+<h2>③ 저장</h2>
+<p>아티팩트 창 위쪽 메뉴에서 내려받거나 공유 링크를 만들 수 있습니다. <code>vibe-practice</code> 폴더에 저장해두세요.</p>
+
+<div class="note warn"><span class="tag">흔한 실수</span>
+<p>완벽한 프롬프트를 쓰려고 30분 고민하기. <strong>세 줄 쓰고 결과를 본 다음 고치는 쪽이 거의 항상 빠릅니다.</strong> 대화는 되돌릴 수 있으니 일단 던지세요.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="02-a"><span>아티팩트로 웹페이지를 하나 만들었다</span></label>
+<label><input type="checkbox" data-ck="02-b"><span>만든 결과를 두 번 이상 고쳤다</span></label>
+<label><input type="checkbox" data-ck="02-c"><span>&ldquo;만들고 → 보고 → 고친다&rdquo; 감각을 이해했다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-03" data-title="클로드 코드 설치" data-track="0">
+<p class="eyebrow">Step 03 · 설치</p>
+<h1>클로드 코드 설치</h1>
+<p class="lead">여기서부터 진짜 도구입니다. 클로드 코드는 내 컴퓨터의 <strong>폴더를 직접 읽고, 파일을 고치고, 명령을 실행</strong>합니다.</p>
+<div class="meta"><span class="chip">약 15분</span><span class="chip">유료 구독 필요</span><span class="chip">터미널 사용</span></div>
+
+<h2>① 터미널 열기</h2>
+<ul class="tight">
+<li><strong>윈도우</strong> — 시작 버튼 → <code>PowerShell</code> 검색 → <strong>Windows PowerShell</strong></li>
+<li><strong>맥</strong> — <kbd>⌘</kbd>+<kbd>Space</kbd> → <code>터미널</code></li>
+</ul>
+
+<h2>② 설치 명령 한 줄</h2>
+<p>본인 운영체제에 맞는 것 <strong>하나만</strong> 붙여넣고 <kbd>Enter</kbd>.</p>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">Windows · PowerShell</span><button class="copy">복사</button></div>
+<pre>irm https://claude.ai/install.ps1 | iex</pre></div>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">macOS · Linux · WSL</span><button class="copy">복사</button></div>
+<pre>curl -fsSL https://claude.ai/install.sh | bash</pre></div>
+<p>패키지 매니저가 익숙하다면 이쪽도 됩니다.</p>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">대안</span><button class="copy">복사</button></div>
+<pre><span class="c"># Windows (WinGet)</span>
+winget install Anthropic.ClaudeCode
+
+<span class="c"># macOS (Homebrew)</span>
+brew install --cask claude-code</pre></div>
+
+<div class="note warn"><span class="tag">윈도우 주의</span>
+<p>PowerShell과 CMD는 다른 창입니다. 프롬프트가 <code>PS C:\</code> 로 시작하면 PowerShell, <code>C:\</code> 로만 시작하면 CMD입니다. <code>'irm'은(는) 내부 또는 외부 명령이 아닙니다</code> 오류가 나면 CMD에 PowerShell 명령을 친 겁니다. CMD에서는 아래를 쓰세요.</p></div>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">Windows · CMD</span><button class="copy">복사</button></div>
+<pre>curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd</pre></div>
+
+<h2>③ 확인과 로그인</h2>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">터미널</span><button class="copy">복사</button></div>
+<pre><span class="c"># 버전 숫자 뒤에 (Claude Code)가 보이면 성공</span>
+claude --version
+
+<span class="c"># 실행하면 브라우저가 열리며 로그인. 한 번만 하면 됩니다</span>
+claude</pre></div>
+<p>명령을 못 찾는다고 나오면 터미널을 완전히 닫았다 새로 여세요. 계정을 바꾸려면 세션 안에서 <code>/login</code>, 나가려면 <code>/exit</code> 또는 <kbd>Ctrl</kbd>+<kbd>D</kbd> 두 번.</p>
+
+<div class="note tip"><span class="tag">Tip</span>
+<p>설치가 계속 실패하면 부록 <button class="ghost-btn" data-go="apx-res">자료실</button>의 공식 &ldquo;설치 문제 해결&rdquo; 문서를 보세요. 오류 메시지별로 정리돼 있습니다.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="03-a"><span>터미널을 열 줄 안다</span></label>
+<label><input type="checkbox" data-ck="03-b"><span><code>claude --version</code> 이 버전을 출력한다</span></label>
+<label><input type="checkbox" data-ck="03-c"><span><code>claude</code> 로 로그인까지 마쳤다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-04" data-title="첫 프로젝트 만들기" data-track="1">
+<p class="eyebrow">Step 04 · 첫 프로젝트</p>
+<h1>첫 프로젝트 만들기</h1>
+<p class="lead">할 일 목록 앱 하나를 끝까지. 여기서 배울 건 앱이 아니라 <strong>세션을 여는 법, 승인하는 법, 되돌리는 법</strong>입니다.</p>
+<div class="meta"><span class="chip">약 30분</span><span class="chip">실습</span></div>
+
+<h2>① 폴더로 이동해서 실행</h2>
+<p>클로드 코드는 <strong>실행한 폴더</strong>를 작업 공간으로 삼습니다. 아무 데서나 켜지 마세요.</p>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">터미널</span><button class="copy">복사</button></div>
+<pre>cd Desktop/vibe-practice
+claude</pre></div>
+
+<h2>② 먼저 물어보는 습관</h2>
+<p>지금은 빈 폴더라 답할 게 없지만, 앞으로 남의 프로젝트를 열 때는 <strong>항상 먼저 묻고 시작하세요.</strong></p>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 새 프로젝트를 만났을 때</span><button class="copy">복사</button></div>
+<pre>이 프로젝트가 뭐 하는 건지 설명해줘.
+어떤 기술을 쓰고, 시작점이 되는 파일이 어디야?</pre></div>
+
+<h2>③ 첫 주문</h2>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 클로드 코드에 입력</span><button class="copy">복사</button></div>
+<pre>할 일 목록 웹앱을 만들어줘.
+- 할 일 추가 / 완료 체크 / 삭제가 되어야 해
+- 새로고침해도 목록이 남아 있어야 해 (브라우저에 저장)
+- 파일은 index.html 하나로만 만들어줘
+- 다 만들면 브라우저에서 어떻게 여는지 알려줘</pre></div>
+
+<h2>④ 승인하기</h2>
+<p>설치 후 첫 세션에서는 파일을 바꿀 때마다 물어봅니다. 내용을 보고 <strong>Yes</strong>를 고르세요. 뭘 하려는지 눈에 익히는 시간입니다.</p>
+<p>이후 세션은 요금제에 따라 시작 모드가 다릅니다. Pro·Max·Team의 터미널 세션은 <strong>자동(auto) 모드</strong>로 시작해 대부분 묻지 않고 진행하고, 그 외에는 <strong>수동(Manual) 모드</strong>로 시작합니다. <kbd>Shift</kbd>+<kbd>Tab</kbd> 으로 언제든 바꿉니다. 자세한 건 11단계.</p>
+
+<h2>⑤ 열어보고 고치기</h2>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 수정 요청</span><button class="copy">복사</button></div>
+<pre>완료한 항목은 회색 취소선으로 보이게 하고 목록 맨 아래로 내려가게 해줘.
+위쪽에 "남은 할 일 3개" 처럼 개수도 보여줘.</pre></div>
+
+<h2>지금 외울 키 세 개</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">키</th><th>하는 일</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><kbd>Esc</kbd></td><td>진행 중인 작업을 즉시 멈춤. 대화는 남아서 방향만 바꿀 수 있습니다.</td></tr>
+<tr><td class="k-col"><kbd>Esc</kbd> <kbd>Esc</kbd></td><td>되돌리기 메뉴. 대화만 / 코드만 / 둘 다 복원. <code>/rewind</code> 와 같습니다.</td></tr>
+<tr><td class="k-col"><kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>권한 모드 전환. 06단계 플랜 모드에서 씁니다.</td></tr>
+</tbody>
+</table></div>
+<p>되돌리기는 명령어를 찾을 필요 없이 <code>방금 바꾼 거 되돌려줘</code> 라고 말해도 됩니다.</p>
+
+<div class="note tip"><span class="tag">Tip</span>
+<p><code>/</code> 를 입력하면 쓸 수 있는 명령과 스킬 목록이 뜹니다. <kbd>↑</kbd> 로 이전 프롬프트를 꺼내고, <kbd>Tab</kbd> 으로 자동완성합니다.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="04-a"><span>프로젝트 폴더에서 <code>claude</code> 를 실행했다</span></label>
+<label><input type="checkbox" data-ck="04-b"><span>할 일 앱을 만들어 브라우저에서 열어봤다</span></label>
+<label><input type="checkbox" data-ck="04-c"><span>수정과 되돌리기를 각각 해봤다</span></label>
+<label><input type="checkbox" data-ck="04-d"><span><kbd>Esc</kbd> 로 작업을 멈춰봤다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-05" data-title="프롬프트 5원칙" data-track="1">
+<p class="eyebrow">Step 05 · 프롬프트</p>
+<h1>프롬프트 5원칙</h1>
+<p class="lead">실력이 갈리는 지점입니다. 앤트로픽 공식 가이드에서 뽑은 다섯 가지 — 그대로만 따라 해도 결과가 확 달라집니다.</p>
+<div class="meta"><span class="chip">약 20분</span><span class="chip">공식 가이드 기반</span></div>
+
+<h2>원칙 1 · 구체적으로</h2>
+<p>클로드는 의도를 추측할 수는 있지만 마음을 읽지는 못합니다. <strong>어느 파일인지, 어떤 상황인지, 무엇을 피해야 하는지</strong>를 넣으세요.</p>
+<div class="ba">
+<div class="bad"><span class="mk">✗</span><span>버그 고쳐줘</span></div>
+<div class="good"><span class="mk">✓</span><span>비밀번호를 틀리게 입력하면 빈 화면이 뜨는 로그인 버그를 고쳐줘</span></div>
+</div>
+<div class="ba">
+<div class="bad"><span class="mk">✗</span><span>foo.py 테스트 만들어줘</span></div>
+<div class="good"><span class="mk">✓</span><span>foo.py에 대해 로그아웃 상태 엣지 케이스를 다루는 테스트를 써줘. 목(mock)은 쓰지 마.</span></div>
+</div>
+
+<h2>원칙 2 · 확인할 방법을 같이 주기</h2>
+<p><strong>다섯 중 가장 중요합니다.</strong> 클로드는 &ldquo;다 된 것 같으면&rdquo; 멈춥니다. 검사할 방법이 없으면 그 판단을 사람이 대신 해야 하고, 결국 모든 실수가 사용자가 발견할 때까지 방치됩니다. 반대로 <strong>스스로 돌려볼 수 있는 검사</strong>를 주면 통과할 때까지 알아서 반복합니다. 이게 트랙 3 하네스의 씨앗입니다.</p>
+<div class="ba">
+<div class="bad"><span class="mk">✗</span><span>이메일 검증 함수 만들어줘</span></div>
+<div class="good"><span class="mk">✓</span><span>이메일 검증 함수를 만들어줘. 예시 — user@example.com은 통과, invalid는 실패, user@.com은 실패. 만든 다음 테스트를 돌려서 확인해줘.</span></div>
+</div>
+<div class="ba">
+<div class="bad"><span class="mk">✗</span><span>대시보드 좀 예쁘게 만들어줘</span></div>
+<div class="good"><span class="mk">✓</span><span>[이미지 붙여넣기] 이 디자인대로 만들어줘. 결과를 캡처해서 원본과 비교하고, 다른 점을 목록으로 뽑아서 고쳐줘.</span></div>
+</div>
+<div class="ba">
+<div class="bad"><span class="mk">✗</span><span>빌드가 안 돼</span></div>
+<div class="good"><span class="mk">✓</span><span>빌드가 이 오류로 실패해 — [오류 붙여넣기]. 고치고 빌드가 성공하는지 확인해줘. 오류를 덮어서 숨기지 말고 근본 원인을 잡아줘.</span></div>
+</div>
+<div class="note tip"><span class="tag">한 줄 요약</span>
+<p>&ldquo;됐다&rdquo;고 말하지 말고 <strong>증거를 보여달라</strong>고 하세요. 테스트 출력, 실행한 명령과 결과, 화면 캡처. 증거를 확인하는 게 직접 다시 돌려보는 것보다 훨씬 빠릅니다.</p></div>
+
+<h2>원칙 3 · 이미 있는 것을 가리키기</h2>
+<p>설명하지 말고 <strong>지목</strong>하세요. <code>@파일이름</code> 을 쓰면 클로드가 그 파일을 먼저 읽고 답합니다. 이미지는 그대로 붙여넣거나 끌어다 놓으면 됩니다.</p>
+<div class="ba">
+<div class="bad"><span class="mk">✗</span><span>달력 위젯 하나 추가해줘</span></div>
+<div class="good"><span class="mk">✓</span><span>홈 화면의 기존 위젯들이 어떻게 구현됐는지 보고 패턴을 파악해줘. HotDogWidget.php가 좋은 예야. 같은 패턴으로 달력 위젯을 만들어줘. 이미 쓰는 라이브러리 외에 새 걸 추가하지 마.</span></div>
+</div>
+
+<h2>원칙 4 · 큰 일은 쪼개기</h2>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 단계로 쪼개기</span><button class="copy">복사</button></div>
+<pre>1. 사용자 프로필용 데이터베이스 테이블을 만들어줘
+2. 프로필을 조회하고 수정하는 API를 만들어줘
+3. 사용자가 자기 정보를 보고 고칠 수 있는 화면을 만들어줘
+
+한 단계씩 하고, 각 단계가 끝나면 확인받고 다음으로 넘어가줘.</pre></div>
+
+<h2>원칙 5 · 모르겠으면 인터뷰를 시키기</h2>
+<p>무엇을 만들지 나도 잘 모를 때. 공식 문서가 큰 기능을 시작할 때 권하는 방법입니다.</p>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 인터뷰 시키기</span><button class="copy">복사</button></div>
+<pre>나는 [만들고 싶은 것을 한 줄로]을 만들고 싶어.
+AskUserQuestion 도구를 써서 나를 자세히 인터뷰해줘.
+
+기술 구현, 화면과 사용성, 엣지 케이스, 걱정되는 점, 트레이드오프를 물어봐.
+뻔한 질문은 건너뛰고, 내가 미처 생각 못 한 어려운 부분을 파고들어줘.
+다 파악할 때까지 계속 물어본 다음, SPEC.md 파일에 완성된 명세를 써줘.</pre></div>
+<p>명세가 완성되면 <strong>새 세션</strong>을 열어 그 파일을 보고 만들게 하세요. 좋은 명세는 관련 파일 이름을 적고, 무엇이 범위 밖인지 밝히고, 마지막에 &ldquo;이게 되면 완성&rdquo;이라는 검증 방법으로 끝납니다.</p>
+
+<div class="note warn"><span class="tag">반대로 쓸 때</span>
+<p>탐색 중이라면 막연한 질문도 쓸모가 있습니다. <code>이 파일에서 뭘 개선하면 좋을까?</code> 같은 질문은 내가 물어볼 생각조차 못 한 것들을 끌어올려 줍니다.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="05-a"><span>04단계 프롬프트를 원칙 1대로 다시 써봤다</span></label>
+<label><input type="checkbox" data-ck="05-b"><span>&ldquo;확인할 방법&rdquo;을 포함한 프롬프트를 던져봤다</span></label>
+<label><input type="checkbox" data-ck="05-c"><span>인터뷰 프롬프트로 SPEC.md를 만들어봤다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-06" data-title="계획부터 세우기" data-track="1">
+<p class="eyebrow">Step 06 · 플랜 모드</p>
+<h1>계획부터 세우기</h1>
+<p class="lead">바로 코딩을 시키면 <strong>엉뚱한 문제를 아주 잘 풀어냅니다.</strong> 공식 4단계 흐름으로 그 사고를 막습니다.</p>
+<div class="meta"><span class="chip">약 20분</span><span class="chip">공식 권장 워크플로</span></div>
+
+<h2>탐색 → 계획 → 구현 → 커밋</h2>
+<h3>1. 탐색 — 읽기만 하게 한다</h3>
+<p><kbd>Shift</kbd>+<kbd>Tab</kbd> 을 눌러 상태줄에 <code>⏸ plan mode on</code> 이 뜨게 하세요. 이 모드에서 클로드는 파일을 읽고 답할 뿐 <strong>아무것도 고치지 않습니다.</strong></p>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 플랜 모드에서</span><button class="copy">복사</button></div>
+<pre>/src/auth 폴더를 읽고 우리가 로그인과 세션을 어떻게 처리하는지 파악해줘.
+비밀 값(환경 변수)은 어떻게 관리하고 있는지도 같이 봐줘.</pre></div>
+
+<h3>2. 계획 — 무엇을 바꿀지 먼저 적게 한다</h3>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 플랜 모드에서</span><button class="copy">복사</button></div>
+<pre>구글 로그인을 붙이고 싶어. 어떤 파일을 바꿔야 해?
+세션 흐름은 어떻게 되고, 빠뜨리기 쉬운 부분은 뭐야? 계획을 세워줘.</pre></div>
+<p><kbd>Ctrl</kbd>+<kbd>G</kbd> 를 누르면 계획을 편집기에서 열어 직접 고칠 수 있습니다. 잘못 이해한 부분은 여기서 손보고 넘어가세요.</p>
+
+<h3>3. 구현 — 계획을 승인하고 실행</h3>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 구현 지시</span><button class="copy">복사</button></div>
+<pre>계획대로 구현해줘.
+콜백 처리에 대한 테스트도 쓰고, 테스트를 돌려서 실패하면 고쳐줘.</pre></div>
+
+<h3>4. 커밋 — 저장 지점 남기기</h3>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 마무리</span><button class="copy">복사</button></div>
+<pre>설명이 담긴 메시지로 커밋해줘</pre></div>
+
+<h2>처음부터 플랜 모드로 시작하기</h2>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">터미널</span><button class="copy">복사</button></div>
+<pre>claude --permission-mode plan</pre></div>
+
+<div class="note warn"><span class="tag">언제 건너뛰나</span>
+<p>계획에도 비용이 듭니다. <strong>바뀔 내용을 한 문장으로 설명할 수 있으면 계획은 생략하세요.</strong> 오타 수정, 로그 한 줄 추가, 변수 이름 바꾸기는 그냥 시키면 됩니다.</p>
+<p>계획이 값어치를 하는 건 ① 방법이 확실치 않을 때 ② 여러 파일을 건드릴 때 ③ 내가 모르는 코드를 만질 때입니다.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="06-a"><span><kbd>Shift</kbd>+<kbd>Tab</kbd> 으로 플랜 모드를 켜봤다</span></label>
+<label><input type="checkbox" data-ck="06-b"><span>계획을 먼저 받고 나서 구현시켜봤다</span></label>
+<label><input type="checkbox" data-ck="06-c"><span>계획을 생략해도 되는 경우를 구분할 수 있다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-07" data-title="컨텍스트 관리" data-track="1">
+<p class="eyebrow">Step 07 · 세션 관리</p>
+<h1>컨텍스트 관리와 되돌리기</h1>
+<p class="lead">고급 요령의 대부분이 여기서 나옵니다. <strong>클로드가 갑자기 멍청해지는 것처럼 느껴지는 순간</strong>의 정체를 알면 대응할 수 있습니다.</p>
+<div class="meta"><span class="chip">약 20분</span><span class="chip">가장 실전적</span></div>
+
+<h2>왜 앞의 지시를 잊을까</h2>
+<p>클로드는 대화 전체 — 주고받은 말, 읽은 파일, 명령 실행 결과 — 를 <strong>컨텍스트</strong>라는 기억창에 담아둡니다. 디버깅 한 번, 코드베이스 탐색 한 번으로도 수만 토큰이 들어찹니다. 그리고 이 창이 차오를수록 성능이 떨어집니다.</p>
+<p>업계에서는 이걸 <strong>컨텍스트 불안(context anxiety)</strong>이라고 부릅니다. 검증되지 않은 텍스트가 기억창을 오염시켜 판단이 흐려지는 현상입니다. <strong>컨텍스트는 가장 중요한 자원입니다.</strong></p>
+
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">명령</th><th>언제 쓰나</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><code>/clear</code></td><td><strong>다른 주제로 넘어갈 때.</strong> 대화를 완전히 초기화합니다. 가장 자주 씁니다.</td></tr>
+<tr><td class="k-col"><code>/compact</code></td><td>같은 작업이 길어졌을 때 요약해서 압축. <code>/compact API 변경에 집중해줘</code> 처럼 방향도 줄 수 있습니다.</td></tr>
+<tr><td class="k-col"><code>/context</code></td><td>지금 무엇이 얼마나 차 있는지 확인.</td></tr>
+<tr><td class="k-col"><code>/btw</code></td><td>대화 기록에 남기지 않고 곁가지 질문. 답이 컨텍스트를 차지하지 않습니다.</td></tr>
+<tr><td class="k-col"><kbd>Esc</kbd></td><td>진행 중인 작업 중단. 맥락은 유지됩니다.</td></tr>
+<tr><td class="k-col"><kbd>Esc</kbd> <kbd>Esc</kbd><br><code>/rewind</code></td><td>이전 시점으로 복원. 대화만 / 코드만 / 둘 다 중에 고릅니다.</td></tr>
+<tr><td class="k-col"><code>되돌려줘</code></td><td>명령어가 아니라 그냥 말. 방금 한 변경을 취소합니다.</td></tr>
+</tbody>
+</table></div>
+
+<div class="note stop"><span class="tag">하나만 기억한다면</span>
+<p><strong>같은 문제로 두 번 고쳤는데 아직도 틀리면, 세 번째 수정을 시도하지 마세요.</strong> 그 시점의 컨텍스트는 실패한 시도들로 오염돼 있습니다. <code>/clear</code> 하고, 그동안 알게 된 걸 반영한 새 프롬프트로 다시 시작하세요. 깨끗한 세션 + 좋은 프롬프트는 긴 세션 + 누적된 수정보다 거의 항상 낫습니다.</p></div>
+
+<h2>체크포인트 — 과감하게 시도해도 되는 이유</h2>
+<p>프롬프트를 보낼 때마다 체크포인트가 저장됩니다. 그래서 <strong>&ldquo;일단 과감하게 해보고 아니면 되돌린다&rdquo;</strong>는 전략이 가능합니다. 터미널을 닫았다 나중에 열어도 되돌릴 수 있습니다.</p>
+<div class="note warn"><span class="tag">한계</span>
+<p>체크포인트는 <strong>클로드가 파일 편집 도구로 만든 변경만</strong> 추적합니다. 터미널 명령이나 외부 프로그램이 바꾼 것은 포함되지 않습니다. <strong>깃을 대신하지 못합니다.</strong></p></div>
+
+<h2>어제 하던 걸 이어서</h2>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">터미널</span><button class="copy">복사</button></div>
+<pre><span class="c"># 이 폴더에서 마지막으로 하던 대화 이어가기</span>
+claude -c
+
+<span class="c"># 이전 대화 목록에서 골라서 이어가기</span>
+claude -r</pre></div>
+<p><code>/rename</code> 으로 세션에 이름을 붙여두면(예: <code>oauth-작업</code>) 찾기 쉽습니다. 작업 줄기마다 세션 하나씩 두고 브랜치처럼 쓰세요.</p>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="07-a"><span>컨텍스트가 왜 중요한지 설명할 수 있다</span></label>
+<label><input type="checkbox" data-ck="07-b"><span><code>/clear</code> 와 <code>/compact</code> 를 각각 써봤다</span></label>
+<label><input type="checkbox" data-ck="07-c"><span><kbd>Esc</kbd> <kbd>Esc</kbd> 로 되돌리기 메뉴를 열어봤다</span></label>
+<label><input type="checkbox" data-ck="07-d"><span><code>claude -c</code> 로 이전 대화를 이어가봤다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-08" data-title="하네스 사고법" data-track="2">
+<p class="eyebrow">Step 08 · 하네스 엔지니어링</p>
+<h1>실수를 지적하지 말고,<br>구조로 막으세요</h1>
+<p class="lead">여기서부터 트랙 3입니다. 지금까지는 <strong>잘 시키는 법</strong>을 배웠고, 이제부터는 <strong>잘못 됐을 때 자동으로 걸리게 만드는 법</strong>을 배웁니다.</p>
+<div class="meta"><span class="chip">약 25분</span><span class="chip">개념 · 중요</span><span class="chip">트랙 3 시작</span></div>
+
+<h2>Agent = Model + Harness</h2>
+<p>2026년의 핵심 등식입니다. 에이전트의 성능은 모델만으로 정해지지 않습니다. <strong>모델을 둘러싼 나머지 전부</strong> — 도구, 검증, 안전장치, 기억 관리 — 가 결과를 좌우합니다. 이 &lsquo;나머지 전부&rsquo;가 하네스이고, 이걸 의도적으로 설계하는 게 <strong>하네스 엔지니어링</strong>입니다.</p>
+<p>핵심 사고방식은 한 문장으로 요약됩니다.</p>
+<div class="note stop"><span class="tag">원칙</span>
+<p><strong>에이전트가 실수하면, 그 실수를 다시는 할 수 없도록 구조를 만든다.</strong> 같은 지적을 두 번 하고 있다면 그건 프롬프트 문제가 아니라 하네스가 없는 문제입니다.</p></div>
+
+<h2>하네스는 이렇게 생겼습니다</h2>
+<figure>
+<svg viewBox="0 0 860 300" role="img" aria-label="하네스 제어 루프 도해. 사람의 요청이 가이드 층(CLAUDE.md·스킬)을 거쳐 클로드 모델에 들어가고, 모델이 파일과 명령을 변경하면 센서 층(테스트·린터·리뷰)이 검사한다. 실패하면 오류 텍스트가 모델로 되먹임되어 통과할 때까지 반복되고, 통과하면 완료된다. 가드레일인 훅과 권한은 모델의 위험한 행동을 실행 전에 차단한다.">
+  <text class="dg-guard-t" x="448" y="30" text-anchor="middle">가드레일 · 훅 / 권한 — 위험한 행동은 실행 전에 차단</text>
+  <path class="dg-guard" d="M312 46 L312 62 L584 62 L584 46"/>
+  <line class="dg-arrow" x1="372" y1="62" x2="372" y2="98" stroke-dasharray="4 3"/>
+  <polygon class="dg-head" points="372,104 368.5,98 375.5,98"/>
+  <line class="dg-arrow" x1="524" y1="62" x2="524" y2="98" stroke-dasharray="4 3"/>
+  <polygon class="dg-head" points="524,104 520.5,98 527.5,98"/>
+
+  <text class="dg-s" x="210" y="96" text-anchor="middle">FEEDFORWARD</text>
+  <text class="dg-s" x="686" y="96" text-anchor="middle">FEEDBACK</text>
+
+  <rect class="dg-fill2 dg-st" x="12" y="110" width="96" height="56"/>
+  <text class="dg-t" x="60" y="134" text-anchor="middle">요청</text>
+  <text class="dg-s" x="60" y="152" text-anchor="middle">사람</text>
+
+  <rect class="dg-fill dg-st" x="140" y="110" width="140" height="56"/>
+  <text class="dg-t" x="210" y="134" text-anchor="middle">가이드</text>
+  <text class="dg-s" x="210" y="152" text-anchor="middle">CLAUDE.md · 스킬</text>
+
+  <rect class="dg-fill2 dg-st" x="312" y="110" width="120" height="56"/>
+  <text class="dg-t" x="372" y="134" text-anchor="middle">클로드</text>
+  <text class="dg-s" x="372" y="152" text-anchor="middle">모델</text>
+
+  <rect class="dg-fill dg-st" x="464" y="110" width="120" height="56"/>
+  <text class="dg-t" x="524" y="134" text-anchor="middle">변경</text>
+  <text class="dg-s" x="524" y="152" text-anchor="middle">파일 · 명령</text>
+
+  <rect class="dg-fill dg-st" x="616" y="110" width="140" height="56"/>
+  <text class="dg-t" x="686" y="134" text-anchor="middle">센서</text>
+  <text class="dg-s" x="686" y="152" text-anchor="middle">테스트 · 린터 · 리뷰</text>
+
+  <rect class="dg-fill2 dg-st" x="788" y="110" width="60" height="56"/>
+  <text class="dg-t" x="818" y="142" text-anchor="middle">완료</text>
+
+  <line class="dg-arrow" x1="108" y1="138" x2="134" y2="138"/>
+  <polygon class="dg-head" points="140,138 134,134.5 134,141.5"/>
+  <line class="dg-arrow" x1="280" y1="138" x2="306" y2="138"/>
+  <polygon class="dg-head" points="312,138 306,134.5 306,141.5"/>
+  <line class="dg-arrow" x1="432" y1="138" x2="458" y2="138"/>
+  <polygon class="dg-head" points="464,138 458,134.5 458,141.5"/>
+  <line class="dg-arrow" x1="584" y1="138" x2="610" y2="138"/>
+  <polygon class="dg-head" points="616,138 610,134.5 610,141.5"/>
+  <line class="dg-arrow" x1="756" y1="138" x2="782" y2="138"/>
+  <polygon class="dg-head" points="788,138 782,134.5 782,141.5"/>
+  <text class="dg-s" x="772" y="128" text-anchor="middle">통과</text>
+
+  <polyline class="dg-loop" points="686,166 686,228 372,228 372,174"/>
+  <polygon class="dg-loop-h" points="372,166 368.5,174 375.5,174"/>
+  <text class="dg-loop-t" x="529" y="248" text-anchor="middle">실패하면 오류 텍스트를 그대로 되먹임 — 통과할 때까지 사람 없이 반복</text>
+</svg>
+<figcaption>청록색 되먹임 화살표가 하네스의 핵심입니다. 이 선이 없으면 실패는 사람이 발견할 때까지 방치되고, 사람이 검증 루프 노릇을 하게 됩니다.</figcaption>
+</figure>
+
+<h2>세 종류의 장치</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">종류</th><th>언제 작동</th><th>클로드 코드에서는</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><strong>가이드</strong><br>feedforward</td><td>행동하기 <strong>전에</strong> 방향을 잡아줌</td><td>CLAUDE.md · 규칙 파일 · 스킬 · 플랜 모드 · 명세(SPEC.md)</td></tr>
+<tr><td class="k-col"><strong>센서</strong><br>feedback</td><td>행동한 <strong>뒤에</strong> 결과를 검사</td><td>테스트 · 린터 · 타입 체크 · 화면 캡처 비교 · <code>/code-review</code> · 검증 서브에이전트</td></tr>
+<tr><td class="k-col"><strong>가드레일</strong><br>guardrail</td><td>위험한 행동을 <strong>실행 전에 차단</strong></td><td>권한 모드 · <code>/permissions</code> 허용목록 · 샌드박스 · <code>PreToolUse</code> 훅</td></tr>
+</tbody>
+</table></div>
+<p>센서는 다시 둘로 나뉩니다. <strong>계산형</strong>(테스트·린터·타입체크)은 빠르고 결정적이라 매번 돌려도 되고, <strong>추론형</strong>(코드 리뷰 에이전트, LLM 판정)은 느리고 비싸지만 의미를 봅니다. <strong>계산형을 먼저 깔고, 추론형은 마지막 관문으로</strong> 쓰는 게 정석입니다.</p>
+
+<h2>실패 → 하네스 처방</h2>
+<p>업계에서 이름이 붙은 실패 유형과, 각각에 맞는 장치입니다. 이 표가 트랙 3의 목차이기도 합니다.</p>
+<div class="tbl-wrap"><table>
+<thead><tr><th>이런 일이 반복되면</th><th>이걸 만드세요</th><th>어디서</th></tr></thead>
+<tbody>
+<tr><td>규칙이나 명령어를 자꾸 잊는다</td><td>CLAUDE.md에 한 줄 추가</td><td>09단계</td></tr>
+<tr><td><strong>승리 선언 편향</strong> — 다 됐다는데 안 된다</td><td>스스로 돌려볼 검사를 준다</td><td>10단계</td></tr>
+<tr><td>긴 작업에서 도중에 멈춘다</td><td><code>/goal</code> 또는 <code>Stop</code> 훅으로 종료 조건 고정</td><td>10단계</td></tr>
+<tr><td>자기가 쓴 코드를 자기가 채점한다</td><td>새 컨텍스트의 검증 서브에이전트</td><td>10단계</td></tr>
+<tr><td>위험한 명령을 실행하려 한다</td><td><code>PreToolUse</code> 훅으로 차단</td><td>11단계</td></tr>
+<tr><td>포맷·린트를 매번 시켜야 한다</td><td><code>PostToolUse</code> 훅으로 자동 실행</td><td>11단계</td></tr>
+<tr><td><strong>컨텍스트 불안</strong> — 잡음으로 가득 찬다</td><td>서브에이전트로 격리 · <code>/clear</code></td><td>12단계</td></tr>
+<tr><td><strong>원샷 과욕</strong> — 한 방에 다 하려다 엉망</td><td>플랜 모드로 쪼개기</td><td>06단계</td></tr>
+<tr><td>같은 절차를 매번 설명하고 있다</td><td>스킬로 저장</td><td>12단계</td></tr>
+</tbody>
+</table></div>
+
+<h2>미리 다 만들지 마세요</h2>
+<p>초보자가 가장 많이 하는 실수는 <strong>시작하기도 전에 설정부터 완비하려는 것</strong>입니다. 공식 문서도 반대로 권합니다. 각 장치에는 알아보기 쉬운 <strong>신호</strong>가 있고, 그 신호가 왔을 때 추가하면 됩니다.</p>
+<div class="tbl-wrap"><table>
+<thead><tr><th>이 신호가 오면</th><th>이걸 추가</th></tr></thead>
+<tbody>
+<tr><td>클로드가 같은 관례나 명령어를 <strong>두 번</strong> 틀린다</td><td>CLAUDE.md</td></tr>
+<tr><td>같은 프롬프트를 매번 타이핑하고 있다</td><td>내가 부르는 스킬</td></tr>
+<tr><td>같은 절차서를 <strong>세 번째</strong> 붙여넣고 있다</td><td>스킬</td></tr>
+<tr><td>클로드가 못 보는 브라우저 탭에서 데이터를 계속 복사하고 있다</td><td>MCP 서버 연결</td></tr>
+<tr><td>곁가지 작업의 출력이 대화를 뒤덮는다</td><td>서브에이전트</td></tr>
+<tr><td>묻지 않고 <strong>매번</strong> 일어나야 하는 게 있다</td><td>훅</td></tr>
+<tr><td>다른 저장소에도 같은 설정이 필요하다</td><td>플러그인으로 포장</td></tr>
+</tbody>
+</table></div>
+<p><strong>규칙은 벌어들이는 것입니다.</strong> 실제 실패를 본 뒤에 추가하고, 각 줄이 어떤 사고를 막는지 설명할 수 있어야 합니다. 겪지도 않은 실패를 대비한 규칙은 잡음이 되어 진짜 규칙을 묻어버립니다.</p>
+
+<div class="note tip"><span class="tag">이 사이트도 그렇게 만들었습니다</span>
+<p>지금 보고 있는 이 페이지는 하네스를 갖춘 채로 만들어졌습니다. <code>CLAUDE.md</code>(가이드), <code>harness/verify.sh</code>의 14개 자동 검사(센서), 생성물 직접 편집을 막는 <code>PreToolUse</code> 훅과 편집할 때마다 검증을 돌리는 <code>PostToolUse</code> 훅(가드레일). 실제로 그중 한 검사가 모바일 레이아웃 붕괴를 잡아냈습니다. 부록 <button class="ghost-btn" data-go="apx-blueprint">내 하네스 설계도</button>에 그 구조를 그대로 옮겨뒀습니다.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="08-a"><span>Agent = Model + Harness의 뜻을 안다</span></label>
+<label><input type="checkbox" data-ck="08-b"><span>가이드 · 센서 · 가드레일을 구분할 수 있다</span></label>
+<label><input type="checkbox" data-ck="08-c"><span>&ldquo;미리 다 만들지 않는다&rdquo;는 원칙에 동의한다</span></label>
+<label><input type="checkbox" data-ck="08-d"><span>내가 겪은 실패 하나를 표에서 찾아봤다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-09" data-title="가이드 층 · CLAUDE.md" data-track="2">
+<p class="eyebrow">Step 09 · 가이드 층</p>
+<h1>CLAUDE.md — 매번 읽히는 규칙</h1>
+<p class="lead">하네스의 첫 번째 층. <code>CLAUDE.md</code>는 클로드가 <strong>매 대화 시작마다 자동으로 읽는 파일</strong>입니다. &ldquo;매번 같은 말 반복하기&rdquo;를 없애줍니다.</p>
+<div class="meta"><span class="chip">약 20분</span><span class="chip">피드포워드</span><span class="chip">프로젝트마다 1개</span></div>
+
+<h2>초안 자동 생성</h2>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">클로드 코드 안에서</span><button class="copy">복사</button></div>
+<pre>/init</pre></div>
+<p>현재 프로젝트 구조를 보고 초안을 만들어 줍니다. 그다음부터가 진짜 일 — <strong>깎아내는 것</strong>입니다.</p>
+
+<h2>좋은 CLAUDE.md는 짧습니다</h2>
+<div class="card file"><div class="card-bar"><span class="lbl">CLAUDE.md</span><button class="copy">복사</button></div>
+<pre># 코드 스타일
+- ES 모듈(import/export)을 쓴다. CommonJS(require)는 쓰지 않는다
+- import는 가능하면 구조 분해로 (예: import { foo } from 'bar')
+
+# 작업 방식
+- 코드를 여러 개 고친 뒤에는 반드시 타입 체크를 돌린다
+- 속도를 위해 전체 테스트보다 개별 테스트를 먼저 돌린다</pre></div>
+
+<div class="tbl-wrap"><table>
+<thead><tr><th>✅ 넣기</th><th>❌ 빼기</th></tr></thead>
+<tbody>
+<tr><td>짐작할 수 없는 실행·테스트 명령</td><td>코드를 읽으면 알 수 있는 것</td></tr>
+<tr><td>기본값과 다른 코드 스타일 규칙</td><td>클로드가 이미 아는 표준 관례</td></tr>
+<tr><td>테스트 방법과 선호하는 테스트 도구</td><td>상세한 API 문서 (링크로 대체)</td></tr>
+<tr><td>브랜치 이름·PR 규칙 같은 저장소 예절</td><td>자주 바뀌는 정보</td></tr>
+<tr><td>이 프로젝트만의 설계 결정</td><td>파일별 설명 나열</td></tr>
+<tr><td>필요한 환경 변수 등 개발 환경 특이사항</td><td>&ldquo;깔끔하게 짜라&rdquo; 같은 당연한 말</td></tr>
+<tr><td>자주 걸려 넘어지는 함정</td><td>겪어보지 않은 실패에 대한 대비</td></tr>
+</tbody>
+</table></div>
+
+<div class="note stop"><span class="tag">핵심 감각</span>
+<p>한 줄마다 물어보세요 — <strong>&ldquo;이걸 지우면 클로드가 실수할까?&rdquo;</strong> 아니라면 지웁니다. 길어진 CLAUDE.md는 오히려 무시당합니다. 중요한 규칙이 잡음에 묻히기 때문입니다. <strong>200줄을 넘기지 마세요.</strong></p></div>
+
+<h2>운영 요령</h2>
+<ul>
+<li><strong>로드 확인</strong> — <code>/context</code> 로 지금 무엇이 올라와 있는지 봅니다.</li>
+<li><strong>자꾸 어기는 규칙</strong> — <strong>그 줄에만</strong> <code>IMPORTANT</code> 를 붙이세요. 여러 줄에 붙이면 아무것도 강조되지 않습니다.</li>
+<li><strong>길어졌다면</strong> — <code>/doctor</code> 를 돌리면 코드에서 유추 가능한 내용을 잘라내자고 제안해 줍니다.</li>
+<li><strong>깃에 커밋하세요</strong> — 팀이 함께 다듬으면 시간이 갈수록 값어치가 쌓입니다.</li>
+</ul>
+
+<h2>규칙 파일과 스킬로 나누기</h2>
+<p>CLAUDE.md가 커지기 시작하면 세 곳으로 나눠 담습니다. <strong>로드되는 시점이 다른 게 핵심</strong>입니다.</p>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">어디에</th><th>언제 로드</th><th>무엇을</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><code>CLAUDE.md</code></td><td>매 세션</td><td>모든 작업에 필요한 핵심 관례와 빌드·테스트 명령</td></tr>
+<tr><td class="k-col"><code>.claude/rules/*.md</code></td><td>매 세션, 또는 해당 파일을 만질 때만</td><td>언어별·폴더별 지침. <code>paths</code> 항목을 쓰면 관련 파일을 다룰 때만 올라와 컨텍스트를 아낍니다.</td></tr>
+<tr><td class="k-col"><code>.claude/skills/</code></td><td>필요할 때만</td><td>가끔 쓰는 참고 자료, <code>/이름</code> 으로 부르는 절차 (12단계)</td></tr>
+</tbody>
+</table></div>
+
+<div class="note warn"><span class="tag">중요한 한계</span>
+<p>CLAUDE.md의 규칙은 <strong>요청이지 보장이 아닙니다.</strong> &ldquo;<code>.env</code>는 절대 건드리지 마&rdquo;라고 적어둬도 지켜지지 않을 수 있습니다. <strong>반드시 지켜져야 하는 규칙은 훅으로 강제하세요</strong>(11단계). 이 구분이 하네스 엔지니어링의 알맹이입니다.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="09-a"><span><code>/init</code> 으로 CLAUDE.md 초안을 만들었다</span></label>
+<label><input type="checkbox" data-ck="09-b"><span>불필요한 줄을 지워서 짧게 다듬었다</span></label>
+<label><input type="checkbox" data-ck="09-c"><span>남은 각 줄이 어떤 실수를 막는지 말할 수 있다</span></label>
+<label><input type="checkbox" data-ck="09-d"><span>규칙(요청)과 훅(강제)의 차이를 안다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-10" data-title="센서 층 · 검증 루프" data-track="2">
+<p class="eyebrow">Step 10 · 센서 층</p>
+<h1>검증 루프 — 사람이 빠져도 닫히는 고리</h1>
+<p class="lead">하네스에서 <strong>가장 값어치가 큰 한 가지</strong>를 고르라면 이겁니다. 클로드에게 스스로 돌려볼 수 있는 검사를 주면, 지켜보는 세션이 자리를 떠도 되는 세션으로 바뀝니다.</p>
+<div class="meta"><span class="chip">약 25분</span><span class="chip">피드백</span><span class="chip">최우선</span></div>
+
+<h2>왜 검사가 없으면 사람이 센서가 되는가</h2>
+<p>클로드는 <strong>작업이 다 된 것처럼 보이면</strong> 멈춥니다. 돌려볼 검사가 없으면 &ldquo;다 된 것 같다&rdquo;가 유일한 신호이고, 그때부터 사람이 검증 루프가 됩니다. 모든 실수가 사람이 발견할 때까지 기다리는 상태죠. 이 실패 유형에는 이름도 있습니다 — <strong>승리 선언 편향(victory declaration bias)</strong>.</p>
+<p>검사를 주면 고리가 스스로 닫힙니다. 클로드가 작업하고, 검사를 돌리고, 결과를 읽고, 통과할 때까지 반복합니다.</p>
+
+<h2>단계 1 · 프롬프트에 검사를 넣는다</h2>
+<p>가장 가벼운 방법이고 오늘 당장 됩니다. 05단계 원칙 2가 이겁니다.</p>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 프롬프트 안에서 고리 닫기</span><button class="copy">복사</button></div>
+<pre>장바구니 합계 계산 함수를 만들어줘.
+
+검증 기준:
+- 빈 장바구니는 0
+- 수량 2개짜리 1000원 상품은 2000원
+- 10% 쿠폰이 붙으면 1800원
+- 수량이 음수면 오류를 던진다
+
+만든 다음 테스트를 돌리고, 실패하면 통과할 때까지 고쳐줘.
+마지막에 테스트 출력 결과를 그대로 보여줘.</pre></div>
+
+<h2>단계 2 · 세션 전체의 종료 조건을 건다</h2>
+<p><code>/goal</code> 로 조건을 걸어두면 매 턴이 끝날 때마다 별도의 평가자가 조건 충족 여부를 다시 확인하고, 해결될 때까지 클로드가 계속 일합니다.</p>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">클로드 코드 안에서</span><button class="copy">복사</button></div>
+<pre>/goal 모든 테스트가 통과하고 타입 체크에 오류가 없을 것</pre></div>
+
+<h2>단계 3 · 훅으로 강제한다</h2>
+<p><code>Stop</code> 훅은 검사를 스크립트로 돌려서, 통과하지 못하면 <strong>턴이 끝나는 것 자체를 막습니다.</strong> 가장 결정적인 관문입니다. (11단계에서 훅 문법을 다룹니다.)</p>
+
+<h2>단계 4 · 다른 눈으로 본다</h2>
+<p>여기서부터 <strong>추론형 센서</strong>입니다. 자기가 쓴 코드를 자기가 채점하지 않게 만드는 방법입니다.</p>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">클로드 코드 안에서</span><button class="copy">복사</button></div>
+<pre>/code-review</pre></div>
+<p>새 서브에이전트가 <strong>지금 변경분만</strong> 처음 보는 눈으로 검토합니다. 그 코드를 만든 과정을 모르기 때문에 결과만 놓고 판단합니다.</p>
+<p>계획 대비 검토를 원하면 직접 시키세요.</p>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 계획 대비 검토</span><button class="copy">복사</button></div>
+<pre>서브에이전트로 이번 변경분을 PLAN.md와 대조해서 검토해줘.
+요구사항이 전부 구현됐는지, 명시된 엣지 케이스에 테스트가 있는지,
+범위 밖의 것이 바뀌지 않았는지 확인해줘.
+
+취향 문제는 빼고, 동작의 정확성이나 요구사항에 영향을 주는 빠진 것만 보고해줘.</pre></div>
+<div class="note warn"><span class="tag">과잉 대응 주의</span>
+<p>&ldquo;문제를 찾아라&rdquo;고 시킨 검토자는 문제가 없어도 뭔가를 찾아냅니다. 지적을 전부 반영하면 불필요한 추상화와 방어 코드, 일어날 수 없는 경우에 대한 테스트가 늘어납니다. <strong>정확성이나 요구사항에 영향을 주는 것만</strong> 고치세요. 그래서 위 프롬프트 마지막 줄이 있습니다.</p></div>
+
+<h2>무엇이든 검사가 될 수 있습니다</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">만드는 것</th><th>줄 수 있는 검사</th></tr></thead>
+<tbody>
+<tr><td class="k-col">함수 · 로직</td><td>테스트 케이스와 기대값, 그리고 &ldquo;테스트를 돌려줘&rdquo;</td></tr>
+<tr><td class="k-col">화면 · 디자인</td><td>원본 이미지와 &ldquo;캡처해서 비교하고 다른 점을 목록으로&rdquo;</td></tr>
+<tr><td class="k-col">빌드가 깨졌을 때</td><td>오류 전문과 &ldquo;빌드가 성공하는지 확인해줘&rdquo;</td></tr>
+<tr><td class="k-col">데이터 처리</td><td>입력 샘플과 정답 파일, 그리고 &ldquo;출력을 정답과 비교해줘&rdquo;</td></tr>
+<tr><td class="k-col">문서 · 설정</td><td>검사 스크립트 (이 사이트의 <code>verify.sh</code> 같은)</td></tr>
+</tbody>
+</table></div>
+
+<div class="note tip"><span class="tag">실제 사례</span>
+<p>이 사이트의 센서는 <code>harness/verify.sh</code> 14개 검사입니다. 그중 &ldquo;표는 반드시 가로 스크롤 컨테이너 안에&rdquo; 검사와 &ldquo;색상은 토큰에서만&rdquo; 검사가 실제로 버그를 잡았습니다. <strong>검사는 화려할 필요가 없습니다.</strong> 눈으로 놓치는 걸 기계가 매번 확인해주면 됩니다.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="10-a"><span>승리 선언 편향이 뭔지 안다</span></label>
+<label><input type="checkbox" data-ck="10-b"><span>검증 기준을 넣은 프롬프트를 던져봤다</span></label>
+<label><input type="checkbox" data-ck="10-c"><span><code>/code-review</code> 를 실행해봤다</span></label>
+<label><input type="checkbox" data-ck="10-d"><span>내 프로젝트에서 쓸 검사를 하나 정했다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-11" data-title="가드레일 층 · 훅과 권한" data-track="2">
+<p class="eyebrow">Step 11 · 가드레일 층</p>
+<h1>훅과 권한 — 요청이 아니라 강제</h1>
+<p class="lead">CLAUDE.md에 적은 규칙은 <strong>지켜달라는 부탁</strong>입니다. 훅은 <strong>지켜지게 만드는 장치</strong>입니다. 이 차이가 하네스의 알맹이입니다.</p>
+<div class="meta"><span class="chip">약 25분</span><span class="chip">가드레일</span><span class="chip">설정 파일 편집</span></div>
+
+<h2>권한 모드 — 첫 번째 가드레일</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">모드</th><th>동작</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><strong>자동 (auto)</strong></td><td>별도의 분류 모델이 사람 대신 행동을 검토합니다. 권한을 넘어서는 시도, 알 수 없는 인프라 접근, 외부 콘텐츠에 이끌린 행동만 막고 나머지는 묻지 않습니다. Pro·Max·Team의 터미널·VS Code 세션 기본값.</td></tr>
+<tr><td class="k-col"><strong>수동 (Manual)</strong></td><td>파일 쓰기, 명령 실행, MCP 도구 사용 전에 매번 물어봅니다. 그 외 요금제의 기본값.</td></tr>
+<tr><td class="k-col"><strong>플랜 (plan)</strong></td><td>읽기만 하고 아무것도 바꾸지 않습니다.</td></tr>
+</tbody>
+</table></div>
+<p><kbd>Shift</kbd>+<kbd>Tab</kbd> 으로 전환합니다. <strong>입문자는 처음 몇 주 수동 모드를 권합니다</strong> — 클로드가 어떤 명령을 실행하려는지 눈에 익히는 시간이 나중에 큰 자산이 됩니다.</p>
+<p>익숙해지면 매번 승인하는 대신 <strong>범위를 정해두세요.</strong></p>
+<ul class="tight">
+<li><code>/permissions</code> — 안전한 도구를 미리 허용 (<code>npm run lint</code>, <code>git commit</code> 등)</li>
+<li><code>/sandbox</code> — OS 수준에서 파일·네트워크 접근을 제한한 채 자유롭게 작업하게 함</li>
+</ul>
+
+<h2>훅 — 무조건 매번 일어나는 일</h2>
+<p>훅은 클로드 코드가 특정 시점에 자동으로 실행하는 명령입니다. <strong>클로드가 판단할 여지가 없습니다.</strong> 자주 쓰는 시점은 넷입니다.</p>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">시점</th><th>언제 터지나</th><th>주로</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><code>PreToolUse</code></td><td>도구 실행 <strong>직전</strong>. 막을 수 있음</td><td>위험한 파일 수정 · 명령 차단</td></tr>
+<tr><td class="k-col"><code>PostToolUse</code></td><td>도구 실행 성공 후</td><td>포맷팅, 린트, 자동 빌드</td></tr>
+<tr><td class="k-col"><code>Stop</code></td><td>클로드가 응답을 마칠 때</td><td>검사 통과 전까지 종료 차단</td></tr>
+<tr><td class="k-col"><code>Notification</code></td><td>클로드가 입력을 기다릴 때</td><td>데스크톱 알림</td></tr>
+</tbody>
+</table></div>
+
+<h3>가장 쓸모 있는 첫 훅 — 편집할 때마다 포맷</h3>
+<p><code>.claude/settings.json</code> 에 넣습니다. 파일이 없으면 만드세요.</p>
+<div class="card file"><div class="card-bar"><span class="lbl">.claude/settings.json</span><button class="copy">복사</button></div>
+<pre>{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write"
+          }
+        ]
+      }
+    ]
+  }
+}</pre></div>
+<p>이제 클로드가 파일을 고칠 때마다 자동으로 포맷됩니다. 잘 됐는지 보려면 <code>/hooks</code> 를 입력하세요.</p>
+
+<h3>두 번째 훅 — 건드리면 안 되는 파일 차단</h3>
+<p><code>.env</code>, 잠금 파일, <code>.git/</code> 같은 곳을 지킵니다. 스크립트가 종료 코드 <code>2</code>로 끝나면 클로드 코드가 편집을 막고, <strong>왜 막혔는지 이유를 클로드에게 전달</strong>해서 방법을 바꾸게 합니다.</p>
+<div class="card file"><div class="card-bar"><span class="lbl">.claude/hooks/protect-files.sh</span><button class="copy">복사</button></div>
+<pre>#!/bin/bash
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+FILE_PATH="${FILE_PATH//\//}"
+
+PROTECTED=(".env" "package-lock.json" ".git/")
+
+for p in "${PROTECTED[@]}"; do
+  if [[ "$FILE_PATH" == *"$p"* ]]; then
+    echo "차단: $FILE_PATH 는 보호된 파일입니다 ($p)" &gt;&amp;2
+    exit 2
+  fi
+done
+exit 0</pre></div>
+<div class="card file"><div class="card-bar"><span class="lbl">.claude/settings.json — 등록</span><button class="copy">복사</button></div>
+<pre>{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh"
+          }
+        ]
+      }
+    ]
+  }
+}</pre></div>
+<p>맥·리눅스에서는 실행 권한이 필요합니다 — <code>chmod +x .claude/hooks/protect-files.sh</code></p>
+
+<div class="note tip"><span class="tag">직접 안 짜도 됩니다</span>
+<p>훅은 클로드에게 시키면 만들어 줍니다. <code>파일을 수정할 때마다 eslint를 돌리는 훅을 써줘</code> 또는 <code>migrations 폴더 수정을 막는 훅을 써줘</code> 처럼요. 다만 <strong>무엇을 강제할지 정하는 건 사람의 몫</strong>입니다.</p></div>
+
+<h2>훅 설계 두 가지 원칙</h2>
+<ol>
+<li><strong>성공은 조용히, 실패는 시끄럽게.</strong> 통과했을 때는 아무 말도 하지 마세요. 컨텍스트만 잡아먹습니다. 실패했을 때는 오류 텍스트를 그대로 뱉으세요 — 그게 클로드에게 되먹임되어 스스로 고치는 재료가 됩니다.</li>
+<li><strong>규칙은 벌어들이는 것.</strong> 겪은 사고에 대해서만 훅을 만드세요. 각 훅이 어떤 사고를 막는지 설명할 수 없다면 그건 잡음입니다.</li>
+</ol>
+
+<div class="note stop"><span class="tag">기억할 한 문장</span>
+<p>CLAUDE.md의 &ldquo;<code>.env</code>를 절대 수정하지 마&rdquo;는 <strong>요청</strong>입니다. <code>PreToolUse</code> 훅으로 그 편집을 막는 건 <strong>강제</strong>입니다. 반드시 지켜져야 하는 규칙이라면 훅으로 만드세요.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="11-a"><span>세 가지 권한 모드의 차이를 안다</span></label>
+<label><input type="checkbox" data-ck="11-b"><span><code>PreToolUse</code> 와 <code>PostToolUse</code> 의 차이를 안다</span></label>
+<label><input type="checkbox" data-ck="11-c"><span>훅을 하나 만들고 <code>/hooks</code> 로 확인했다</span></label>
+<label><input type="checkbox" data-ck="11-d"><span>&ldquo;요청 vs 강제&rdquo;를 설명할 수 있다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-12" data-title="확장 층 · 스킬 · MCP" data-track="2">
+<p class="eyebrow">Step 12 · 확장 층</p>
+<h1>스킬 · 서브에이전트 · MCP</h1>
+<p class="lead">하네스의 마지막 층. <strong>지식을 넣고, 작업을 격리하고, 바깥 세계에 연결하는</strong> 세 가지 장치입니다.</p>
+<div class="meta"><span class="chip">약 25분</span><span class="chip">필요할 때 다시</span></div>
+
+<h2>스킬 — 가끔 필요한 지식과 절차</h2>
+<p>CLAUDE.md는 매 대화에 통째로 올라갑니다. 그래서 <strong>가끔만 쓰는 내용은 여기 넣으면 안 됩니다.</strong> 스킬은 필요할 때만 불러오기 때문에 평소엔 이름과 한 줄 설명만 차지합니다.</p>
+<div class="card file"><div class="card-bar"><span class="lbl">.claude/skills/api-conventions/SKILL.md</span><button class="copy">복사</button></div>
+<pre>---
+name: api-conventions
+description: 우리 서비스의 REST API 설계 규칙
+---
+# API 규칙
+- URL 경로는 kebab-case
+- JSON 속성은 camelCase
+- 목록 응답에는 반드시 페이지네이션을 넣는다
+- 버전은 경로에 표시한다 (/v1/, /v2/)</pre></div>
+<p>절차를 담아 <code>/이름</code> 으로 직접 부를 수도 있습니다. 부작용이 있는 작업(배포 등)은 <code>disable-model-invocation: true</code> 를 넣어 <strong>내가 부를 때만</strong> 돌게 하세요.</p>
+<div class="card file"><div class="card-bar"><span class="lbl">.claude/skills/fix-issue/SKILL.md</span><button class="copy">복사</button></div>
+<pre>---
+name: fix-issue
+description: GitHub 이슈 하나를 처리한다
+disable-model-invocation: true
+---
+$ARGUMENTS 이슈를 분석하고 고쳐줘.
+
+1. gh issue view 로 이슈 내용을 본다
+2. 관련 코드를 찾는다
+3. 고친다
+4. 테스트를 쓰고 돌려서 확인한다
+5. 린트와 타입 체크를 통과시킨다
+6. 설명이 담긴 메시지로 커밋하고 PR을 연다</pre></div>
+<p>이제 <code>/fix-issue 1234</code> 로 부릅니다.</p>
+
+<h2>서브에이전트 — 컨텍스트를 지키는 방법</h2>
+<p>조사는 파일을 많이 읽습니다. 그 내용이 전부 본 대화에 쌓이면 정작 구현할 때 쓸 공간이 없습니다. 서브에이전트는 <strong>별도의 기억창</strong>에서 일하고 <strong>요약만</strong> 돌려줍니다.</p>
+<figure>
+<svg viewBox="0 0 700 230" role="img" aria-label="서브에이전트 컨텍스트 격리 도해. 본 대화에서 조사 지시를 보내면 서브에이전트가 별도 컨텍스트에서 파일 30개를 읽고 검색을 12회 수행하지만, 본 대화로는 요약 한 단락만 돌아온다. 중간 과정은 서브에이전트 쪽에 남고 끝나면 버려진다.">
+  <rect class="dg-fill dg-st" x="16" y="46" width="280" height="160"/>
+  <text class="dg-t" x="32" y="72">본 대화</text>
+  <text class="dg-s" x="32" y="100">· 내 지시와 클로드의 답</text>
+  <text class="dg-s" x="32" y="122">· 고친 코드</text>
+  <text class="dg-s" x="32" y="144">· 서브에이전트 요약 1개</text>
+  <line class="dg-st" x1="32" y1="162" x2="280" y2="162"/>
+  <text class="dg-loop-t" x="32" y="184">깨끗하게 유지됨</text>
+
+  <rect class="dg-fill2 dg-st" x="404" y="46" width="280" height="160"/>
+  <text class="dg-t" x="420" y="72">서브에이전트</text>
+  <text class="dg-s" x="420" y="100">· 파일 30개 읽음</text>
+  <text class="dg-s" x="420" y="122">· 검색 12회</text>
+  <text class="dg-s" x="420" y="144">· 중간 추론 전부</text>
+  <line class="dg-st" x1="420" y1="162" x2="668" y2="162"/>
+  <text class="dg-s" x="420" y="184">끝나면 통째로 버려짐</text>
+
+  <text class="dg-s" x="350" y="84" text-anchor="middle">조사 지시</text>
+  <line class="dg-arrow" x1="296" y1="96" x2="398" y2="96"/>
+  <polygon class="dg-head" points="404,96 398,92.5 398,99.5"/>
+
+  <text class="dg-loop-t" x="350" y="142" text-anchor="middle">요약만</text>
+  <line class="dg-loop" x1="404" y1="154" x2="302" y2="154"/>
+  <polygon class="dg-loop-h" points="296,154 302,150.5 302,157.5"/>
+</svg>
+<figcaption>조사에 쓴 30개 파일은 오른쪽에 남고 본 대화에는 요약 한 단락만 들어옵니다. 컨텍스트가 가장 귀한 자원이므로, 이 격리가 서브에이전트를 가장 강력한 도구로 만듭니다.</figcaption>
+</figure>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 서브에이전트에게 시키기</span><button class="copy">복사</button></div>
+<pre>서브에이전트로 우리 인증 시스템이 토큰 갱신을 어떻게 처리하는지,
+그리고 재사용할 만한 OAuth 유틸리티가 이미 있는지 조사해줘.</pre></div>
+
+<h2>스킬 vs 서브에이전트 — 헷갈리는 지점</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">기준</th><th>스킬</th><th>서브에이전트</th></tr></thead>
+<tbody>
+<tr><td class="k-col">정체</td><td>재사용 가능한 지시·지식·절차</td><td>자기 기억창을 가진 격리된 일꾼</td></tr>
+<tr><td class="k-col">핵심 이득</td><td>어느 맥락에서든 같은 내용을 불러 씀</td><td>컨텍스트 격리. 요약만 돌아옴</td></tr>
+<tr><td class="k-col">컨텍스트 영향</td><td>본 기억창에 더해짐</td><td>별도 기억창을 씀</td></tr>
+<tr><td class="k-col">적합한 일</td><td>참고 자료, 부르는 절차</td><td>파일 많이 읽는 작업, 검증, 병렬 작업</td></tr>
+</tbody>
+</table></div>
+
+<h2>MCP — 바깥 세계에 연결</h2>
+<p>노션, 피그마, 데이터베이스, 브라우저 같은 외부 시스템을 클로드의 도구로 붙입니다.</p>
+<div class="card term"><div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="lbl">터미널</span><button class="copy">복사</button></div>
+<pre>claude mcp add --transport http notion https://mcp.notion.com/mcp</pre></div>
+<p>연결 상태는 <code>/mcp</code> 로 확인합니다. <strong>MCP는 연결을 주고, 스킬은 그 연결을 잘 쓰는 법을 줍니다.</strong> 예를 들어 MCP로 데이터베이스를 붙이고, 스킬에 우리 스키마와 자주 쓰는 질의 패턴을 적어두는 식으로 짝지어 씁니다.</p>
+
+<h2>플러그인 — 포장해서 재사용</h2>
+<p>스킬·훅·서브에이전트·MCP 설정을 하나로 묶은 설치 단위입니다. <code>/plugin</code> 으로 마켓플레이스를 엽니다. <strong>두 번째 저장소에 같은 설정이 필요해지면</strong> 그때가 플러그인으로 만들 시점입니다.</p>
+
+<h2>층별 컨텍스트 비용</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">장치</th><th>언제 로드</th><th>비용</th></tr></thead>
+<tbody>
+<tr><td class="k-col">CLAUDE.md</td><td>세션 시작</td><td><strong>매 요청마다 전체</strong> — 그래서 짧아야 합니다</td></tr>
+<tr><td class="k-col">스킬</td><td>시작 시 설명만, 쓸 때 전체</td><td>낮음</td></tr>
+<tr><td class="k-col">MCP</td><td>시작 시 도구 이름만</td><td>쓰기 전까지 낮음</td></tr>
+<tr><td class="k-col">서브에이전트</td><td>부를 때</td><td>본 세션과 분리됨</td></tr>
+<tr><td class="k-col">훅</td><td>이벤트 발생 시</td><td><strong>0</strong> — 출력이 없으면 아예 안 들어옴</td></tr>
+</tbody>
+</table></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="12-a"><span>CLAUDE.md와 스킬 중 어디에 넣을지 판단할 수 있다</span></label>
+<label><input type="checkbox" data-ck="12-b"><span>서브에이전트로 조사를 한 번 시켜봤다</span></label>
+<label><input type="checkbox" data-ck="12-c"><span>스킬을 하나 만들어봤다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-13" data-title="안전하게 쓰기" data-track="3">
+<p class="eyebrow">Step 13 · 안전</p>
+<h1>배포 전 안전 점검</h1>
+<p class="lead">가장 많이 건너뛰고 가장 크게 후회하는 단계입니다. 이제 트랙 3을 배웠으니 <strong>점검을 손으로 하지 말고 하네스로 만드세요.</strong></p>
+<div class="meta"><span class="chip">약 20분</span><span class="chip">건너뛰지 마세요</span></div>
+
+<h2>AI 코드에서 반복되는 세 가지</h2>
+<ol>
+<li><strong>인증·권한 처리 누락</strong> — 로그인 없이도 남의 데이터에 접근 가능</li>
+<li><strong>SQL 인젝션</strong> — 사용자 입력이 그대로 데이터베이스 질의에 들어감</li>
+<li><strong>민감정보 하드코딩</strong> — 키·비밀번호가 코드 안에 그대로</li>
+</ol>
+
+<h2>절대 하지 말 것</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>하지 말 것</th><th>대신</th></tr></thead>
+<tbody>
+<tr><td>API 키·비밀번호를 코드에 직접 적기</td><td><code>.env</code> 파일에 넣고 환경 변수로 읽기</td></tr>
+<tr><td><code>.env</code> 를 깃에 커밋하기</td><td><code>.gitignore</code> 에 <code>.env</code> 를 반드시 추가</td></tr>
+<tr><td>서버용 키를 프론트엔드에 노출</td><td>브라우저로 내려가는 값에 서버 키를 넣지 않기 (<code>NEXT_PUBLIC_</code> 같은 접두사 주의)</td></tr>
+<tr><td>인증 확인 없이 민감한 API 열어두기</td><td>사용자 정보·삭제·관리자 기능은 로그인 확인부터</td></tr>
+</tbody>
+</table></div>
+<p>공개 저장소에 올라간 키는 <strong>수 초 안에 자동화된 봇이 수집합니다.</strong> 클라우드 키가 노출되고 몇십 분 만에 수백 달러가 청구된 사례가 반복해서 보고됩니다.</p>
+
+<h2>점검을 하네스로 만들기</h2>
+<p>매번 기억해서 확인하는 건 실패합니다. 세 층으로 나눠 박아두세요.</p>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">층</th><th>무엇을</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><strong>가이드</strong></td><td>CLAUDE.md에 한 줄 — <code>IMPORTANT: 비밀 값은 .env에만 둔다. 코드에 직접 적지 않는다.</code></td></tr>
+<tr><td class="k-col"><strong>가드레일</strong></td><td><code>PreToolUse</code> 훅으로 <code>.env</code> 편집 차단 (11단계 스크립트 그대로)</td></tr>
+<tr><td class="k-col"><strong>센서</strong></td><td>커밋 전 비밀값 스캔을 <code>Stop</code> 훅이나 pre-commit 훅으로</td></tr>
+</tbody>
+</table></div>
+
+<h2>배포 전 점검 프롬프트</h2>
+<p>하네스를 아직 안 만들었다면 최소한 이건 돌리세요.</p>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 배포 전 필수</span><button class="copy">복사</button></div>
+<pre>배포하기 전에 보안 점검을 해줘.
+
+1. 코드에 하드코딩된 API 키, 비밀번호, 토큰이 있는지 전부 찾아줘
+2. .gitignore에 .env가 있는지, 이미 커밋된 비밀 정보가 있는지 확인해줘
+3. 로그인 확인 없이 접근할 수 있는 API 엔드포인트가 있는지 확인해줘
+4. 사용자 입력이 검증 없이 DB나 화면에 들어가는 곳이 있는지 확인해줘
+
+발견한 것마다 파일 경로와 줄 번호, 구체적인 수정 방법을 알려줘.
+확실하지 않으면 추측이라고 표시해줘.</pre></div>
+<p>그다음 <code>/code-review</code> 로 새 눈의 검토를 한 번 더 받으세요. 이 두 개가 최소 관문입니다.</p>
+
+<div class="note stop"><span class="tag">기준선</span>
+<p>개인 연습용이면 여기까지로 충분합니다. <strong>남이 쓸 서비스를 올린다면</strong> 위 세 가지 취약점은 사람이 직접 눈으로 확인하세요. AI가 만든 코드에 대한 AI의 검토만으로 끝내지 않는 게 안전합니다.</p></div>
+
+<div class="done-box">
+<span class="tag">확인하고 넘어가기</span>
+<label><input type="checkbox" data-ck="13-a"><span><code>.gitignore</code> 에 <code>.env</code> 가 있는지 확인했다</span></label>
+<label><input type="checkbox" data-ck="13-b"><span>배포 전 점검 프롬프트를 돌려봤다</span></label>
+<label><input type="checkbox" data-ck="13-c"><span>점검 중 하나를 하네스(훅/규칙)로 옮겼다</span></label>
+</div>
+</section>
+
+<section class="step" id="step-14" data-title="깃과 배포" data-track="3">
+<p class="eyebrow">Step 14 · 공개</p>
+<h1>깃과 배포</h1>
+<p class="lead">깃 명령어를 외울 필요가 없습니다. <strong>말로 시키면 됩니다.</strong> 대신 &ldquo;언제 저장 지점을 남길지&rdquo;라는 감각만 챙기세요.</p>
+<div class="meta"><span class="chip">약 25분</span><span class="chip">마지막 단계</span></div>
+
+<h2>깃이 뭔가요</h2>
+<p>파일의 <strong>저장 지점(커밋)</strong>을 남겨두는 도구입니다. 07단계의 체크포인트가 터미널 명령으로 생긴 변경을 못 잡는다고 했는데, 깃은 잡습니다.</p>
+
+<h2>말로 하는 깃</h2>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 그대로 말하면 됩니다</span><button class="copy">복사</button></div>
+<pre>내가 바꾼 파일들 보여줘
+
+설명이 담긴 메시지로 커밋해줘
+
+feature/todo-filter 라는 새 브랜치 만들어줘
+
+최근 커밋 5개 보여줘
+
+머지 충돌 해결하는 것 좀 도와줘</pre></div>
+
+<h2>습관 하나 — 실험 전에 커밋</h2>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 실험 전에</span><button class="copy">복사</button></div>
+<pre>지금 상태로 일단 커밋해줘. 이제부터 좀 과감하게 실험해볼 거야.</pre></div>
+
+<h2>GitHub에 올리기</h2>
+<p><a href="https://cli.github.com/" target="_blank" rel="noopener">GitHub CLI(<code>gh</code>)</a> 를 설치해두면 클로드가 이슈·PR·코멘트를 직접 다룰 수 있습니다. 없어도 되지만 있으면 훨씬 매끄럽습니다.</p>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 저장소 만들고 올리기</span><button class="copy">복사</button></div>
+<pre>이 프로젝트를 깃 저장소로 만들어줘.
+그다음 비공개(private) GitHub 저장소를 새로 만들어서 올려줘.
+
+올리기 전에 .gitignore를 먼저 만들어서
+.env 같은 비밀 파일이 절대 올라가지 않게 해줘.</pre></div>
+
+<h2>웹에 배포하기</h2>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 배포 방법 상담</span><button class="copy">복사</button></div>
+<pre>이 프로젝트를 인터넷에 무료로 공개하고 싶어.
+지금 구조에 맞는 방법을 2가지만 추천하고 각각의 장단점을 알려줘.
+내가 고르면 필요한 설정 파일을 만들고 배포 순서를 하나씩 알려줘.</pre></div>
+
+<h2>여기까지 왔다면</h2>
+<p>15단계를 다 마쳤습니다. 이제 만들 수 있고, 확인할 수 있고, 안전장치를 걸 수 있습니다. 다음은 <strong>실제 프로젝트를 하나 끝까지</strong> 해보는 것입니다.</p>
+<ul>
+<li>부록 <button class="ghost-btn" data-go="apx-blueprint">내 하네스 설계도</button> — 새 프로젝트를 시작할 때 그대로 따라 쓰는 템플릿</li>
+<li>부록 <button class="ghost-btn" data-go="apx-res">자료실</button> — 클로드 아카데미 공식 코스, 한국어 책과 영상</li>
+<li>공식 <strong>모범 사례</strong> 문서 통독 — 이 사이트를 다 본 지금이 가장 잘 읽히는 시점입니다</li>
+</ul>
+
+<div class="done-box">
+<span class="tag">과정 완료</span>
+<label><input type="checkbox" data-ck="14-a"><span>말로 시켜서 커밋을 남겨봤다</span></label>
+<label><input type="checkbox" data-ck="14-b"><span><code>.gitignore</code> 를 만들었다</span></label>
+<label><input type="checkbox" data-ck="14-c"><span>만든 것을 배포하거나 공유해봤다</span></label>
+<label><input type="checkbox" data-ck="14-d"><span>15단계를 전부 마쳤다 🎉</span></label>
+</div>
+</section>
+
+<section class="step" id="apx-cheat" data-title="치트시트" data-track="4">
+<p class="eyebrow">부록 A</p>
+<h1>치트시트</h1>
+<p class="lead">막힐 때 여기만 보면 됩니다.</p>
+<div class="meta"><span class="chip">한 장 요약</span></div>
+
+<h2>터미널에서</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">명령</th><th>하는 일</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><code>claude</code></td><td>대화 시작</td></tr>
+<tr><td class="k-col"><code>claude "할 일"</code></td><td>첫 지시와 함께 시작</td></tr>
+<tr><td class="k-col"><code>claude -p "질문"</code></td><td>한 번만 물어보고 종료</td></tr>
+<tr><td class="k-col"><code>claude -c</code></td><td>이 폴더의 마지막 대화 이어가기</td></tr>
+<tr><td class="k-col"><code>claude -r</code></td><td>이전 대화 골라서 이어가기</td></tr>
+<tr><td class="k-col"><code>claude --permission-mode plan</code></td><td>플랜 모드로 시작</td></tr>
+<tr><td class="k-col"><code>claude --version</code></td><td>설치 확인</td></tr>
+<tr><td class="k-col"><code>claude mcp add ...</code></td><td>MCP 서버 연결</td></tr>
+</tbody>
+</table></div>
+
+<h2>대화 안에서</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">명령</th><th>하는 일</th><th>층</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><code>/help</code></td><td>명령 목록</td><td>—</td></tr>
+<tr><td class="k-col"><code>/init</code></td><td>CLAUDE.md 초안 만들기</td><td>가이드</td></tr>
+<tr><td class="k-col"><code>/doctor</code></td><td>길어진 CLAUDE.md 정리 제안</td><td>가이드</td></tr>
+<tr><td class="k-col"><code>/context</code></td><td>컨텍스트 사용량 보기</td><td>가이드</td></tr>
+<tr><td class="k-col"><code>/goal</code></td><td>세션 종료 조건 걸기</td><td>센서</td></tr>
+<tr><td class="k-col"><code>/code-review</code></td><td>변경분을 새 눈으로 검토</td><td>센서</td></tr>
+<tr><td class="k-col"><code>/permissions</code></td><td>허용할 도구 관리</td><td>가드레일</td></tr>
+<tr><td class="k-col"><code>/sandbox</code></td><td>파일·네트워크 격리</td><td>가드레일</td></tr>
+<tr><td class="k-col"><code>/hooks</code></td><td>설정된 훅 확인</td><td>가드레일</td></tr>
+<tr><td class="k-col"><code>/mcp</code></td><td>MCP 연결 상태</td><td>확장</td></tr>
+<tr><td class="k-col"><code>/plugin</code></td><td>플러그인 마켓플레이스</td><td>확장</td></tr>
+<tr><td class="k-col"><code>/clear</code></td><td>대화 완전 초기화</td><td>세션</td></tr>
+<tr><td class="k-col"><code>/compact</code></td><td>대화 요약·압축</td><td>세션</td></tr>
+<tr><td class="k-col"><code>/rewind</code></td><td>이전 시점으로 되돌리기</td><td>세션</td></tr>
+<tr><td class="k-col"><code>/btw</code></td><td>기록에 안 남기고 곁가지 질문</td><td>세션</td></tr>
+<tr><td class="k-col"><code>/rename</code></td><td>세션에 이름 붙이기</td><td>세션</td></tr>
+<tr><td class="k-col"><code>/login</code></td><td>계정 전환</td><td>—</td></tr>
+<tr><td class="k-col"><code>/exit</code></td><td>종료</td><td>—</td></tr>
+</tbody>
+</table></div>
+
+<h2>키보드</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">키</th><th>하는 일</th></tr></thead>
+<tbody>
+<tr><td class="k-col"><kbd>Esc</kbd></td><td>진행 중인 작업 멈추기</td></tr>
+<tr><td class="k-col"><kbd>Esc</kbd> <kbd>Esc</kbd></td><td>되돌리기 메뉴</td></tr>
+<tr><td class="k-col"><kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>권한 모드 전환</td></tr>
+<tr><td class="k-col"><kbd>Ctrl</kbd>+<kbd>G</kbd></td><td>계획을 편집기에서 열기</td></tr>
+<tr><td class="k-col"><kbd>↑</kbd></td><td>이전 프롬프트 꺼내기</td></tr>
+<tr><td class="k-col"><kbd>Tab</kbd></td><td>명령어 자동완성</td></tr>
+<tr><td class="k-col"><code>/</code></td><td>쓸 수 있는 명령·스킬 보기</td></tr>
+<tr><td class="k-col"><code>@</code></td><td>파일 직접 지목</td></tr>
+</tbody>
+</table></div>
+
+<h2>외울 필요 없는 것 — 그냥 말하세요</h2>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 말로 하는 명령</span><button class="copy">복사</button></div>
+<pre>방금 바꾼 거 되돌려줘
+뭐가 바뀌었는지 보여줘
+설명이 담긴 메시지로 커밋해줘
+테스트 돌려서 결과 보여줘
+이거 왜 이렇게 짰는지 설명해줘
+서브에이전트로 조사해줘
+파일 수정할 때마다 린트 돌리는 훅 만들어줘</pre></div>
+
+<h2>막혔을 때 순서</h2>
+<ol>
+<li>같은 걸 두 번 고쳤는데 안 되면 → <code>/clear</code> 후 다시 (07단계)</li>
+<li>앞말을 잊으면 → <code>/context</code> 확인 후 <code>/compact</code> 또는 <code>/clear</code></li>
+<li>엉뚱한 걸 만들면 → 플랜 모드로 계획부터 (06단계)</li>
+<li>같은 지시를 매번 반복 중이면 → CLAUDE.md에 적기 (09단계)</li>
+<li>결과가 맞는지 모르겠으면 → 검증 방법을 프롬프트에 (10단계)</li>
+<li>반드시 지켜져야 하는데 안 지켜지면 → 훅으로 강제 (11단계)</li>
+<li>설치·실행이 안 되면 → 부록 <button class="ghost-btn" data-go="apx-res">자료실</button>의 공식 문서</li>
+</ol>
+</section>
+
+<section class="step" id="apx-blueprint" data-title="내 하네스 설계도" data-track="4">
+<p class="eyebrow">부록 B</p>
+<h1>내 하네스 설계도</h1>
+<p class="lead">새 프로젝트를 시작할 때 이 순서대로. <strong>처음부터 전부 만들지 말고, 신호가 오면 한 칸씩 채웁니다.</strong></p>
+<div class="meta"><span class="chip">템플릿</span><span class="chip">복사해서 사용</span></div>
+
+<h2>0단계 · 아무것도 없이 시작</h2>
+<p>폴더를 만들고 <code>claude</code> 를 켭니다. 설정 파일 없이 그냥 만드세요. <strong>실패를 보기 전에는 규칙을 만들 근거가 없습니다.</strong></p>
+
+<h2>1단계 · 첫 실패가 나오면 CLAUDE.md</h2>
+<p>같은 관례나 명령어를 두 번 틀렸을 때 <code>/init</code> 을 돌리고 깎아냅니다.</p>
+<div class="card file"><div class="card-bar"><span class="lbl">CLAUDE.md — 최소 골격</span><button class="copy">복사</button></div>
+<pre># 실행
+- 개발 서버: (여기에 실제 명령)
+- 테스트: (여기에 실제 명령)
+- 타입 체크: (여기에 실제 명령)
+
+# 규칙
+- (겪은 실패 하나당 한 줄만. 겪지 않은 건 적지 않는다)
+
+# 검증
+- 코드를 고친 뒤에는 반드시 테스트와 타입 체크를 돌린다</pre></div>
+
+<h2>2단계 · 검증 방법을 고정</h2>
+<p>이 프로젝트에서 &ldquo;됐다&rdquo;를 무엇으로 증명할지 정합니다. 하나만 있어도 충분합니다.</p>
+<div class="tbl-wrap"><table>
+<thead><tr><th class="k-col">프로젝트 종류</th><th>가장 쉬운 검사</th></tr></thead>
+<tbody>
+<tr><td class="k-col">웹 화면</td><td>스크린샷 비교, 또는 페이지가 오류 없이 뜨는지 확인하는 스크립트</td></tr>
+<tr><td class="k-col">API · 로직</td><td>테스트 몇 개와 테스트 실행 명령</td></tr>
+<tr><td class="k-col">데이터 처리</td><td>입력 샘플과 정답 파일을 두고 출력 비교</td></tr>
+<tr><td class="k-col">문서 · 설정</td><td>규칙을 검사하는 셸 스크립트</td></tr>
+</tbody>
+</table></div>
+
+<h2>3단계 · 반드시 지켜야 할 것 하나를 훅으로</h2>
+<p>보통 <code>.env</code> 보호가 첫 번째입니다. 11단계의 스크립트를 그대로 쓰세요.</p>
+
+<h2>4단계 · 반복되는 절차를 스킬로</h2>
+<p>같은 절차서를 세 번째 붙여넣고 있을 때 만듭니다.</p>
+
+<h2>이 사이트가 쓴 하네스</h2>
+<p>지금 보고 있는 페이지의 실제 구성입니다. 규모는 작지만 네 층이 다 있습니다.</p>
+<div class="card file"><div class="card-bar"><span class="lbl">프로젝트 구조</span><button class="copy">복사</button></div>
+<pre>CLAUDE.md              가이드 — 색상은 토큰으로만, 표는 스크롤 컨테이너에
+index.html             단일 소스 (이것만 편집)
+harness/build.sh       index.html 을 게시본으로 변환
+harness/verify.sh      센서 — 14개 자동 검사
+harness/protect.sh     가드레일 — 생성물 직접 편집 차단 (PreToolUse)
+harness/on-edit.sh     자동화 — 편집할 때마다 빌드와 검증 (PostToolUse)
+.claude/settings.json  훅 등록</pre></div>
+<p>센서가 확인하는 것 — 빌드 동기화, 태그 균형, 색상이 전부 토큰에서 오는지, 세 테마 블록의 토큰 집합이 일치하는지, 내부 링크가 전부 살아있는지, 표가 스크롤 컨테이너 안에 있는지, 외부 리소스가 Google Fonts뿐인지.</p>
+<div class="note tip"><span class="tag">실제로 잡힌 것</span>
+<p>&ldquo;색상은 토큰에서만&rdquo; 검사와 표 스크롤 검사가 실제로 걸렸습니다. 사람 눈으로는 두 테마를 번갈아 확인해야 보이는 문제인데, 스크립트는 매번 자동으로 봅니다. <strong>이게 하네스의 값어치입니다</strong> — 화려한 도구가 아니라, 놓치기 쉬운 걸 기계가 반복해서 봐주는 것.</p></div>
+
+<h2>클로드에게 하네스를 짜게 하기</h2>
+<div class="card prompt"><div class="card-bar"><span class="lbl">▷ 새 프로젝트 시작할 때</span><button class="copy">복사</button></div>
+<pre>이 프로젝트에 맞는 최소한의 하네스를 만들어줘.
+
+1. 이 프로젝트에서 "제대로 됐다"를 기계가 확인할 방법이 뭔지 먼저 제안해줘
+2. 그 검사를 돌리는 스크립트를 하나 만들어줘 (성공은 조용히, 실패는 이유를 자세히)
+3. 반드시 지켜져야 하는 규칙이 있으면 CLAUDE.md가 아니라 훅으로 만들어줘
+4. CLAUDE.md에는 네가 짐작할 수 없는 것만 적어줘
+
+과하게 만들지 마. 지금 필요한 것만.</pre></div>
+
+<h2>내 하네스 점검표</h2>
+<div class="done-box">
+<span class="tag">프로젝트마다 채우기</span>
+<label><input type="checkbox" data-ck="bp-a"><span><strong>가이드</strong> — CLAUDE.md에 빌드·테스트 명령이 있다</span></label>
+<label><input type="checkbox" data-ck="bp-b"><span><strong>가이드</strong> — 각 규칙이 어떤 실패를 막는지 말할 수 있다</span></label>
+<label><input type="checkbox" data-ck="bp-c"><span><strong>센서</strong> — 클로드가 스스로 돌려볼 검사가 하나 이상 있다</span></label>
+<label><input type="checkbox" data-ck="bp-d"><span><strong>센서</strong> — 큰 변경 뒤 <code>/code-review</code> 를 돌린다</span></label>
+<label><input type="checkbox" data-ck="bp-e"><span><strong>가드레일</strong> — <code>.env</code> 등 위험한 파일이 훅으로 보호된다</span></label>
+<label><input type="checkbox" data-ck="bp-f"><span><strong>가드레일</strong> — 권한 모드를 의식적으로 선택했다</span></label>
+<label><input type="checkbox" data-ck="bp-g"><span><strong>복구</strong> — 깃 저장소이고 실험 전에 커밋한다</span></label>
+</div>
+</section>
+
+<section class="step" id="apx-res" data-title="자료실" data-track="4">
+<p class="eyebrow">부록 C</p>
+<h1>자료실</h1>
+<p class="lead">더 깊이 파고 싶을 때. <strong>공식 → 한국어 책 → 영상</strong> 순서를 권합니다.</p>
+<div class="meta"><span class="chip">2026년 8월 기준</span></div>
+
+<h2>① 공식 — 여기부터</h2>
+<ul class="res">
+<li>
+<div class="rt"><a href="https://academy.claude.com" target="_blank" rel="noopener">Claude Academy</a><span class="badge off">공식 · 무료</span></div>
+<p>앤트로픽이 직접 만든 학습 플랫폼. 26개 코스가 4개 학습 경로로 나뉘어 있고 전부 무료입니다. 로그인 없이도 볼 수 있으며, 계정이 있으면 진도가 저장되고 수료 배지를 링크드인에 붙일 수 있습니다.</p>
+<ul class="sub">
+<li><div class="rt"><a href="https://academy.claude.com/tutorials/the-4-properties-of-ai" target="_blank" rel="noopener">The 4 Properties of AI</a><span class="badge">7분</span></div><p>가장 짧은 입문. 시간이 없으면 이것부터.</p></li>
+<li><div class="rt"><a href="https://academy.claude.com/courses/ai-fluency-framework-foundations" target="_blank" rel="noopener">AI Fluency: Framework &amp; Foundations</a><span class="badge">14강 + 퀴즈 · 약 4시간</span></div><p>위임(Delegation)·설명(Description)·판별(Discernment)·성실(Diligence)의 4D 프레임워크. 코딩이 아니라 <strong>AI와 협업하는 기본기</strong>라서 비개발자에게 특히 값어치가 큽니다. 이 사이트 트랙 1~2와 잘 맞습니다.</p></li>
+<li><div class="rt"><a href="https://academy.claude.com/courses/ai-capabilities-and-limitations" target="_blank" rel="noopener">AI Capabilities and Limitations</a><span class="badge">13강 + 퀴즈 · 약 3.5시간</span></div><p>다음 토큰 예측, 지식, 작업 기억, 조종 가능성, 컨텍스트 한계. <strong>왜 AI가 틀리는지</strong> 이해하고 싶을 때. 07단계의 배경입니다.</p></li>
+<li><div class="rt"><a href="https://academy.claude.com/courses/claude-code-in-action" target="_blank" rel="noopener">Claude Code in Action</a><span class="badge">9강 + 퀴즈 · 약 1시간</span></div><p>긴 세션 다루기, 따르게 만드는 CLAUDE.md, 검증 스킬, 권한 모드, 훅, 루틴과 헤드리스, GitHub Actions와 코드 리뷰, 감독 없는 실행 신뢰하기, 플러그인. <strong>사실상 하네스 엔지니어링 공식 코스</strong>입니다. 클로드 코드를 이미 써본 사람 대상이므로 이 사이트 트랙 3을 마친 지금이 적기입니다.</p></li>
+</ul>
+</li>
+<li>
+<div class="rt"><a href="https://code.claude.com/docs/en/best-practices" target="_blank" rel="noopener">클로드 코드 · 모범 사례</a><span class="badge off">공식 문서</span></div>
+<p>앤트로픽 내부 팀에서 검증된 패턴 모음. 05~08단계의 원본이며 <strong>이 사이트를 다 본 뒤 꼭 한 번 통독할 가치가 있습니다.</strong></p>
+</li>
+<li>
+<div class="rt"><a href="https://code.claude.com/docs/en/features-overview" target="_blank" rel="noopener">Extend Claude Code</a><span class="badge off">공식 문서</span></div>
+<p>CLAUDE.md·스킬·훅·서브에이전트·MCP·플러그인을 언제 무엇으로 골라야 하는지 정리한 문서. 09~12단계의 원본입니다. 특히 &ldquo;언제 무엇을 추가하나&rdquo; 신호 표가 실용적입니다.</p>
+</li>
+<li>
+<div class="rt"><a href="https://code.claude.com/docs/en/hooks-guide" target="_blank" rel="noopener">훅 가이드</a><span class="badge off">공식 문서</span></div>
+<p>11단계의 원본. 30개 가까운 이벤트와 실전 예제 JSON이 있습니다.</p>
+</li>
+<li>
+<div class="rt"><a href="https://code.claude.com/docs/en/quickstart" target="_blank" rel="noopener">빠른 시작</a><span class="badge off">공식 문서</span></div>
+<p>설치부터 첫 코드 수정까지. 03~04단계의 원본. 막히면 <a href="https://code.claude.com/docs/en/troubleshoot-install" target="_blank" rel="noopener">설치 문제 해결</a>도 함께.</p>
+</li>
+<li>
+<div class="rt"><a href="https://www.anthropic.com/discord" target="_blank" rel="noopener">Anthropic Discord</a><span class="badge off">공식 커뮤니티</span></div>
+<p>질문하고 팁을 얻는 곳.</p>
+</li>
+</ul>
+
+<h2>② 하네스 엔지니어링 — 트랙 3 더 파기</h2>
+<ul class="res">
+<li>
+<div class="rt"><a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank" rel="noopener">Harness engineering for coding agent users</a><span class="badge">martinfowler.com</span></div>
+<p>가장 정돈된 정의. <strong>가이드(피드포워드)와 센서(피드백)</strong>, <strong>계산형과 추론형</strong> 구분이 여기서 왔습니다. 하네스를 &ldquo;코드베이스를 원하는 상태로 조절하는 제어 장치&rdquo;로 보는 관점.</p>
+</li>
+<li>
+<div class="rt"><a href="https://addyosmani.com/blog/agent-harness-engineering/" target="_blank" rel="noopener">Agent Harness Engineering</a><span class="badge">Addy Osmani</span></div>
+<p>가장 실전적. &ldquo;<strong>규칙은 벌어들이는 것</strong>&rdquo;, &ldquo;<strong>성공은 조용히, 실패는 시끄럽게</strong>&rdquo;, 실패 유형별 처방표가 여기서 왔습니다. 08·11단계의 뼈대.</p>
+</li>
+<li>
+<div class="rt"><a href="https://www.faros.ai/blog/harness-engineering" target="_blank" rel="noopener">Harness Engineering: Making AI Coding Agents Work in 2026</a><span class="badge">개관</span></div>
+<p><strong>Agent = Model + Harness</strong> 등식과 5개 구성 요소(도구 오케스트레이션·검증 루프·컨텍스트와 기억·가드레일·관측). 프롬프트 → 컨텍스트 → 하네스 3단계 흐름도 여기서 정리됐습니다.</p>
+</li>
+<li>
+<div class="rt"><a href="https://github.com/ai-boost/awesome-harness-engineering" target="_blank" rel="noopener">awesome-harness-engineering</a><span class="badge">모음</span></div>
+<p>도구·패턴·평가·기억·MCP·권한·관측·오케스트레이션 링크 모음.</p>
+</li>
+</ul>
+
+<h2>③ 한국어 책</h2>
+<ul class="res">
+<li>
+<div class="rt"><a href="https://www.yes24.com/product/goods/167573138" target="_blank" rel="noopener">혼자 공부하는 바이브 코딩 with 클로드 코드</a><span class="badge kr">입문 추천</span></div>
+<p>조태호 · 한빛미디어 · 2025년 12월. 〈혼자 공부하는〉 시리즈 최초의 AI 코딩 입문서. <strong>15개 실습 프로젝트</strong>를 클로드 코드로 완성하며 개발 흐름을 익힙니다. 저자 유튜브 강의와 Q&amp;A 채널이 함께 운영됩니다. 비전공자 입문용으로 가장 무난한 선택.</p>
+<ul class="sub">
+<li><div class="rt"><a href="https://github.com/taehojo/vibecoding" target="_blank" rel="noopener">공식 GitHub 실습 저장소</a><span class="badge">무료</span></div><p>책을 안 사도 실습 코드는 공개돼 있습니다.</p></li>
+<li><div class="rt"><a href="https://www.youtube.com/playlist?list=PLVsNizTWUw7HQ7avxRw301eget4G3sbjw" target="_blank" rel="noopener">저자 유튜브 강의 플레이리스트</a><span class="badge">무료</span></div></li>
+</ul>
+</li>
+<li>
+<div class="rt"><a href="https://product.kyobobook.co.kr/detail/S000219349783" target="_blank" rel="noopener">클로드 코드를 활용한 바이브 코딩 완벽 입문</a><span class="badge kr">입문 → 중급</span></div>
+<p>히라카와 토모히데. 계정 생성과 CLI 기본기부터 MCP 챗봇 개발, 병렬 처리와 서브에이전트, 보안까지. 위 책보다 <strong>개발자 쪽에 가깝고</strong> 트랙 3과 겹치는 내용이 많습니다.</p>
+</li>
+<li>
+<div class="rt"><a href="https://wikidocs.net/book/18290" target="_blank" rel="noopener">바이브코딩 바이블</a><span class="badge kr">왕초보</span></div>
+<p>이유림 · 레코드나우. 코딩 경험이 전혀 없는 비전공자 관점의 입문서. 저자는 변호사이며, 문과 출신도 가능하다는 관점으로 접근합니다.</p>
+</li>
+<li>
+<div class="rt"><a href="https://product.kyobobook.co.kr/detail/S000217378952" target="_blank" rel="noopener">바로 배워서 바로 써먹는 바이브 코딩</a><span class="badge kr">실전</span></div>
+<p>박찬 외. 활용 사례 중심.</p>
+</li>
+</ul>
+
+<h2>④ 한국어 영상 · 강의</h2>
+<p style="font-size:14.5px;color:var(--muted)">영상은 링크가 자주 바뀝니다. 안 열리면 제목으로 유튜브에서 검색해보세요.</p>
+<ul class="res">
+<li>
+<div class="rt"><a href="https://www.inflearn.com/en/course/%EB%B0%94%EC%9D%B4%EB%B8%8C-%EC%BD%94%EB%94%A9-%EC%9E%85%EB%AC%B8-%EA%B0%95%EC%9D%98-%ED%98%BC%EC%9E%90-%EA%B3%B5%EB%B6%80%ED%95%98%EB%8A%94" target="_blank" rel="noopener">인프런 · 바이브 코딩 입문 강의</a><span class="badge kr">무료</span></div>
+<p>〈혼자 공부하는 바이브 코딩〉 저자 강의. 수강생 1만 명 이상, 평점 4.9.</p>
+</li>
+<li>
+<div class="rt"><a href="https://www.youtube.com/channel/UCQNE2JmbasNYbjGAcuBiRRg" target="_blank" rel="noopener">조코딩</a><span class="badge kr">채널</span></div>
+<p>프로그래밍을 아무것도 모르는 사람도 따라올 수 있게 기초부터 설명하는 채널. 비전공자 대상 코딩·AI 콘텐츠가 많습니다.</p>
+</li>
+<li>
+<div class="rt"><a href="https://www.youtube.com/watch?v=1_bRmkUvjHA" target="_blank" rel="noopener">Claude Code 왕초보 입문 튜토리얼 23가지 팁</a><span class="badge kr">약 50분</span></div>
+<p>설치부터 사용법까지 한 번에. 트랙 1~2 복습용으로 좋습니다.</p>
+</li>
+<li>
+<div class="rt"><a href="https://www.youtube.com/watch?v=vxEvo2BLM6A" target="_blank" rel="noopener">클로드 코드 2시간 안에 마스터하기 (전체 통합본)</a><span class="badge kr">약 2시간</span></div>
+<p>입문 → 실전 → 심화를 한 편으로 묶은 버전.</p>
+</li>
+<li>
+<div class="rt"><a href="https://www.youtube.com/watch?v=km3aogD7wtI" target="_blank" rel="noopener">100시간 아끼는 바이브코딩 입문 가이드 (2026)</a><span class="badge kr">튜토리얼</span></div>
+<p>클로드 코드를 포함한 최신 도구 비교와 워크플로.</p>
+</li>
+<li>
+<div class="rt"><a href="https://www.youtube.com/playlist?list=PL3o4sx7PIgDSlIkmF_ORJuPS01d94SEXE" target="_blank" rel="noopener">클로드 코드 완전정복 가이드 (플레이리스트)</a><span class="badge kr">시리즈</span></div>
+<p>입문 기초부터 순서대로 이어지는 시리즈.</p>
+</li>
+</ul>
+
+<h2>⑤ 개념과 배경</h2>
+<ul class="res">
+<li>
+<div class="rt"><a href="https://x.com/karpathy/status/1886192184808149383" target="_blank" rel="noopener">&ldquo;vibe coding&rdquo; 원문 (Andrej Karpathy, 2025.2.2)</a><span class="badge">원문</span></div>
+<p>이 단어가 시작된 두 문단짜리 글. 읽는 데 30초.</p>
+</li>
+<li>
+<div class="rt"><a href="https://namu.wiki/w/%EB%B0%94%EC%9D%B4%EB%B8%8C%20%EC%BD%94%EB%94%A9" target="_blank" rel="noopener">나무위키 · 바이브 코딩</a><span class="badge kr">개관</span></div>
+<p>용어의 흐름과 국내 논의를 한국어로 훑기.</p>
+</li>
+<li>
+<div class="rt"><a href="https://arxiv.org/html/2506.23253v1" target="_blank" rel="noopener">Vibe coding: programming through conversation with AI</a><span class="badge">논문</span></div>
+<p>현상을 학술적으로 정리한 문헌.</p>
+</li>
+</ul>
+
+<h2>⑥ 보안 — 배포한다면 필독</h2>
+<ul class="res">
+<li>
+<div class="rt"><a href="https://codescan.kr/blog/vibe-coding-security-top10-2026/" target="_blank" rel="noopener">바이브코딩 보안 취약점 TOP 10 (2026)</a><span class="badge kr">체크리스트</span></div>
+<p>AI 생성 코드에서 반복해서 나오는 취약점 정리. 13단계의 배경 자료입니다.</p>
+</li>
+<li>
+<div class="rt"><a href="https://blog.gridge.co.kr/vibe-coding-limits/" target="_blank" rel="noopener">바이브코딩의 현실 — 잘못 쓰면 오히려 느려지는 이유</a><span class="badge kr">비판적 시각</span></div>
+<p>과장된 기대를 걷어내는 데 도움이 되는 글. 한 번쯤 읽어두면 균형이 잡힙니다.</p>
+</li>
+</ul>
+
+<p class="foot">
+이 사이트는 공개 자료를 모아 초보자용 순서로 재구성한 <strong>비공식</strong> 학습 자료이며 앤트로픽과 무관합니다. 설치 명령·기능 설명·워크플로는 <code>2026년 8월</code> 기준 클로드 코드 공식 문서를 따랐고, 하네스 엔지니어링 부분은 위 ② 항목의 문헌을 근거로 정리했습니다. 제품은 계속 바뀌므로 명령어가 다르면 공식 문서를 먼저 확인하세요. 도서·영상 링크는 검색으로 수집했으며 판매처와 링크는 변경될 수 있습니다.
+</p>
+</section>
+
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+"use strict";
+var TRACKS=[
+ ["트랙 1 · 기초","일단 만들어본다"],
+ ["트랙 2 · 실전","잘 시킨다"],
+ ["트랙 3 · 하네스","실수를 구조로 막는다"],
+ ["트랙 4 · 운영","세상에 내보낸다"],
+ ["부록","필요할 때"]
+];
+var STEPS=[
+ ["step-00",0,"바이브 코딩이란","개념과 하네스가 필요한 이유"],
+ ["step-01",0,"준비물 갖추기","계정 · 도구 세 가지 · 폴더"],
+ ["step-02",0,"5분 만에 첫 결과물","설치 없이 브라우저에서"],
+ ["step-03",0,"클로드 코드 설치","터미널 열기부터 로그인까지"],
+ ["step-04",1,"첫 프로젝트 만들기","할 일 앱 하나를 끝까지"],
+ ["step-05",1,"프롬프트 5원칙","실력이 갈리는 지점"],
+ ["step-06",1,"계획부터 세우기","탐색 · 계획 · 구현 · 커밋"],
+ ["step-07",1,"컨텍스트 관리","멍청해지는 순간의 정체"],
+ ["step-08",2,"하네스 사고법","Agent = Model + Harness"],
+ ["step-09",2,"가이드 층 · CLAUDE.md","매번 읽히는 규칙"],
+ ["step-10",2,"센서 층 · 검증 루프","사람 없이 닫히는 고리"],
+ ["step-11",2,"가드레일 층 · 훅과 권한","요청이 아니라 강제"],
+ ["step-12",2,"확장 층 · 스킬 · MCP","지식 · 격리 · 연결"],
+ ["step-13",3,"안전하게 쓰기","배포 전 점검"],
+ ["step-14",3,"깃과 배포","저장하고 공개하기"],
+ ["apx-cheat",4,"치트시트","명령어 한 장 요약"],
+ ["apx-blueprint",4,"내 하네스 설계도","새 프로젝트용 템플릿"],
+ ["apx-res",4,"자료실","공식 코스 · 책 · 영상"]
+];
+var MAIN=15, KEY="vc-harness-kr-v1";
+var ORDER=STEPS.map(function(s){return s[0];});
+var $=function(s,c){return (c||document).querySelector(s);};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s));};
+
+var done={};
+try{ done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ done={}; }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(done)); }catch(e){} }
+
+/* rail */
+var railNav=$("#railNav"), mapGrid=$("#mapGrid");
+TRACKS.forEach(function(t,ti){
+  var box=document.createElement("div"); box.className="trk";
+  var hd=document.createElement("div"); hd.className="trk-hd";
+  hd.innerHTML='<b>'+t[0]+'</b><span>'+t[1]+'</span><em data-gauge="'+ti+'"></em>';
+  box.appendChild(hd);
+  var list=document.createElement(ti===4?"ul":"ol");
+  STEPS.forEach(function(s,i){
+    if(s[1]!==ti) return;
+    var li=document.createElement("li");
+    var n=ti===4?String.fromCharCode(65+i-MAIN):String(i).padStart(2,"0");
+    li.innerHTML='<button class="nav-item" data-go="'+s[0]+'"><span class="nav-num"><span>'+n+'</span></span><span class="nav-txt">'+s[2]+'</span></button>';
+    list.appendChild(li);
+  });
+  box.appendChild(list);
+  railNav.appendChild(box);
+});
+STEPS.forEach(function(s,i){
+  if(i>=MAIN) return;
+  var li=document.createElement("li");
+  li.innerHTML='<button data-go="'+s[0]+'"><b>STEP '+String(i).padStart(2,"0")+'</b><em>'+s[2]+'</em><span>'+s[3]+'</span></button>';
+  mapGrid.appendChild(li);
+});
+
+/* pagers */
+ORDER.forEach(function(id,i){
+  var sec=document.getElementById(id); if(!sec) return;
+  var p=document.createElement("div"); p.className="pager";
+  var pv=ORDER[i-1], nx=ORDER[i+1];
+  function lab(x){ var e=x&&document.getElementById(x); return e?e.getAttribute("data-title"):""; }
+  p.innerHTML=(pv?'<a class="prev" href="#'+pv+'"><b>&larr; 이전</b><em>'+lab(pv)+'</em></a>':'<a class="prev ph" href="#'+ORDER[0]+'"><b>&middot;</b><em>&middot;</em></a>')
+    +(nx?'<a class="next" href="#'+nx+'"><b>다음 &rarr;</b><em>'+lab(nx)+'</em></a>':'<a class="next ph" href="#'+ORDER[0]+'"><b>&middot;</b><em>&middot;</em></a>');
+  sec.appendChild(p);
+});
+
+/* checkboxes */
+$$('[data-ck]').forEach(function(b){
+  b.checked=!!done[b.getAttribute("data-ck")];
+  b.addEventListener("change",function(){ done[b.getAttribute("data-ck")]=b.checked; save(); paint(); });
+});
+function stepDone(id){
+  var bs=$$('[data-ck]',document.getElementById(id));
+  return bs.length>0 && bs.every(function(b){return b.checked;});
+}
+
+/* paint */
+var progNum=$("#progNum"), progFill=$("#progFill"), instrFill=$("#instrFill"), instrPct=$("#instrPct");
+function paint(){
+  var n=0, per=[0,0,0,0,0], tot=[0,0,0,0,0];
+  STEPS.forEach(function(s,i){
+    var d=stepDone(s[0]);
+    var btn=railNav.querySelector('[data-go="'+s[0]+'"]');
+    if(btn) btn.setAttribute("data-done", d?"1":"0");
+    tot[s[1]]++; if(d){ per[s[1]]++; if(i<MAIN) n++; }
+  });
+  progNum.textContent=n;
+  var pct=Math.round(n/MAIN*100);
+  progFill.style.width=pct+"%";
+  instrFill.style.width=pct+"%";
+  instrPct.textContent=pct+"%";
+  $$('[data-gauge]').forEach(function(g){
+    var ti=+g.getAttribute("data-gauge");
+    g.textContent=per[ti]+"/"+tot[ti];
+  });
+}
+
+/* routing */
+var rail=$("#rail"), scrim=$("#scrim"), menuBtn=$("#menuBtn");
+var instrTrack=$("#instrTrack"), instrStep=$("#instrStep");
+function closeRail(){ rail.classList.remove("open"); scrim.classList.remove("on"); if(menuBtn) menuBtn.setAttribute("aria-expanded","false"); }
+function show(id,push){
+  var i=ORDER.indexOf(id); if(i<0){ id=ORDER[0]; i=0; }
+  $$(".step").forEach(function(s){ s.classList.toggle("on", s.id===id); });
+  $$(".nav-item").forEach(function(b){ b.setAttribute("aria-current", b.getAttribute("data-go")===id?"true":"false"); });
+  instrTrack.textContent=TRACKS[STEPS[i][1]][0];
+  instrStep.textContent= i<MAIN ? ("STEP "+String(i).padStart(2,"0")) : ("부록 "+String.fromCharCode(65+i-MAIN));
+  if(push && location.hash!=="#"+id){ try{ history.pushState(null,"","#"+id); }catch(e){ location.hash=id; } }
+  closeRail();
+  window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"});
+  paint();
+}
+document.addEventListener("click",function(ev){
+  if(!ev.target||!ev.target.closest) return;
+  var g=ev.target.closest("[data-go]");
+  if(g){ ev.preventDefault(); show(g.getAttribute("data-go"),true); return; }
+  var a=ev.target.closest('a[href^="#"]');
+  if(a){ ev.preventDefault(); var t=a.getAttribute("href").slice(1); if(t) show(t,true); }
+});
+window.addEventListener("hashchange",function(){ show(location.hash.slice(1),false); });
+
+/* copy */
+$$(".copy").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    var card=btn.closest(".card"), pre=card&&card.querySelector("pre");
+    var txt=pre?pre.innerText:"";
+    var okf=function(){ btn.textContent="복사됨"; setTimeout(function(){ btn.textContent="복사"; },1600); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(okf,function(){ btn.textContent="실패"; });
+    } else {
+      var ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); okf(); }catch(e){ btn.textContent="실패"; }
+      document.body.removeChild(ta);
+    }
+  });
+});
+
+/* mobile menu */
+if(menuBtn){
+  menuBtn.addEventListener("click",function(){
+    var open=rail.classList.toggle("open");
+    scrim.classList.toggle("on",open);
+    menuBtn.setAttribute("aria-expanded",open?"true":"false");
+  });
+}
+scrim.addEventListener("click",closeRail);
+document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeRail(); });
+
+$("#resetBtn").addEventListener("click",function(){
+  if(!confirm("체크한 진도를 모두 지울까요?")) return;
+  done={}; save();
+  $$('[data-ck]').forEach(function(b){ b.checked=false; });
+  paint();
+});
+
+show(location.hash.slice(1)||ORDER[0],false);
+})();
+</script>
+<!--/A2-->
+</body>
+</html>
